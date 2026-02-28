@@ -1,0 +1,119 @@
+/* src/components/layout/Topbar.module.css */
+.topbar {
+    height: 64px;
+    background-color: var(--surface-card);
+    border-bottom: var(--border-width) solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-4);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.menuBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    padding: var(--space-1);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+}
+
+.menuBtn:hover {
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.companyTitle {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    margin: 0;
+    display: none;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.iconBtn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.iconBtn:hover {
+    background-color: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.badge {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--danger-text);
+    border: 2px solid var(--surface-card);
+}
+
+.divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-strong);
+    margin: 0 var(--space-2);
+}
+
+.profileBtn {
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-full);
+    padding: 2px;
+    transition: opacity var(--transition-fast);
+}
+
+.profileBtn:hover {
+    opacity: 0.8;
+}
+
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--surface-hover);
+    color: var(--text-secondary);
+    border: var(--border-width) solid var(--border-subtle);
+}
+
+/* md (768px) and lg (1024px) */
+@media (min-width: 768px) {
+    .companyTitle {
+        display: block;
+    }
+}
+
+@media (min-width: 1024px) {
+    .menuBtn {
+        display: none;
+    }
+}

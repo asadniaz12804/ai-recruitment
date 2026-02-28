@@ -1,0 +1,54 @@
+/* src/components/ui/Badge.module.css */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-full);
+    white-space: nowrap;
+}
+
+/* Sizes */
+.sm {
+    height: 20px;
+    padding: 0 var(--space-2);
+    font-size: 11px;
+}
+
+.md {
+    height: 24px;
+    padding: 0 var(--space-3);
+    font-size: var(--text-xs);
+}
+
+/* Variants */
+.default {
+    background-color: var(--surface-active);
+    color: var(--text-secondary);
+}
+
+.brand {
+    background-color: var(--primary-50);
+    color: var(--primary-700);
+}
+
+[data-theme='dark'] .brand {
+    background-color: var(--primary-700);
+    color: var(--text-primary);
+}
+
+.success {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+}
+
+.warning {
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
+}
+
+.danger {
+    background-color: var(--danger-bg);
+    color: var(--danger-text);
+}

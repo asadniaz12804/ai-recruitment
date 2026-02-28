@@ -1,0 +1,36 @@
+/* src/components/ui/Card.module.css */
+.card {
+    background-color: var(--surface-card);
+    border: var(--border-width) solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-primary);
+    overflow: hidden;
+}
+
+.none {
+    padding: 0;
+}
+
+.sm {
+    padding: var(--space-3);
+}
+
+.md {
+    padding: var(--space-4) var(--space-5);
+}
+
+.lg {
+    padding: var(--space-6) var(--space-8);
+}
+
+.interactive {
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    cursor: pointer;
+}
+
+.interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-strong);
+}

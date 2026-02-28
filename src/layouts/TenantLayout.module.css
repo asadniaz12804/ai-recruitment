@@ -1,0 +1,55 @@
+/* src/layouts/TenantLayout.module.css */
+.layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    background-color: var(--surface-base);
+}
+
+.mainWrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    /* Prevents flex flex-child overflow */
+}
+
+.mainContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-4) 0;
+}
+
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 40;
+    display: block;
+}
+
+/* lg (1024px) */
+@media (min-width: 1024px) {
+    .mainContent {
+        padding: var(--space-8) 0;
+    }
+
+    .container {
+        padding: 0 var(--space-8);
+    }
+
+    .overlay {
+        display: none;
+    }
+}
