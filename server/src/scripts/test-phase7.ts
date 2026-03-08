@@ -19,6 +19,7 @@
  *
  * Usage:  npx tsx src/scripts/test-phase7.ts
  */
+export {};
 
 const BASE = process.env.API_BASE ?? "http://localhost:5000";
 

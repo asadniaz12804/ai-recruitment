@@ -20,6 +20,7 @@
  *
  * Usage:  npx tsx src/scripts/test-phase5.ts
  */
+export {};
 
 const BASE = process.env.API_BASE ?? "http://localhost:5000";
 
@@ -76,9 +77,9 @@ async function run() {
   console.log("\n🔬 Phase 5 Integration Tests\n");
 
   // ---- Login credentials (must match seed data) ----
-  let recruiterToken: string;
-  let candidateToken: string;
-  let adminToken: string;
+  let recruiterToken!: string;
+  let candidateToken!: string;
+  let adminToken!: string;
 
   try {
     recruiterToken = await login("recruiter@example.com", "Password123!");

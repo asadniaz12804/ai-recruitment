@@ -11,6 +11,7 @@
  *
  * Usage:  npx tsx src/scripts/test-phase4.ts
  */
+export {};
 
 const BASE = process.env.API_BASE ?? "http://localhost:5000";
 
@@ -196,7 +197,7 @@ async function run() {
     headers: authHeader(candidateToken),
     body: uploadForm,
   });
-  const uploadBody = await uploadRes.json();
+  const uploadBody: any = await uploadRes.json();
   assert("Candidate can upload resume", uploadRes.status === 201, `status=${uploadRes.status}`);
   assert("Upload returns resume record", !!uploadBody?.data?.id);
   assert(
