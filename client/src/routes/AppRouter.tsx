@@ -16,6 +16,8 @@ import { CompanyCreatePage } from '../pages/CompanyCreatePage';
 import { JobBoardPage } from '../pages/JobBoardPage';
 import { JobDetailPage } from '../pages/JobDetailPage';
 import { CandidateProfilePage } from '../pages/CandidateProfilePage';
+import { MyApplicationsPage } from '../pages/MyApplicationsPage';
+import { RecruiterApplicantsPage } from '../pages/RecruiterApplicantsPage';
 import { RequireAuth } from '../components/shared/RequireAuth';
 
 export const AppRouter = () => {
@@ -57,6 +59,20 @@ export const AppRouter = () => {
                 <Route path="/candidate/profile" element={
                     <RequireAuth roles={['candidate']}>
                         <CandidateProfilePage />
+                    </RequireAuth>
+                } />
+
+                {/* Candidate: My Applications */}
+                <Route path="/candidate/applications" element={
+                    <RequireAuth roles={['candidate']}>
+                        <MyApplicationsPage />
+                    </RequireAuth>
+                } />
+
+                {/* Recruiter: View applicants for a job */}
+                <Route path="/recruiter/jobs/:jobId/applicants" element={
+                    <RequireAuth roles={['recruiter', 'admin']}>
+                        <RecruiterApplicantsPage />
                     </RequireAuth>
                 } />
 

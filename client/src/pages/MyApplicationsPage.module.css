@@ -1,0 +1,202 @@
+.wrapper {
+  min-height: 100vh;
+  background: var(--bg-base, #fafafa);
+}
+
+.navbar {
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border-primary, #e5e5e5);
+  background: var(--bg-surface, #fff);
+}
+
+.navInner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navBrand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-primary, #111);
+  text-decoration: none;
+}
+
+.navActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.navLink {
+  font-size: 0.85rem;
+  color: var(--color-primary, #3b82f6);
+  text-decoration: none;
+}
+
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  color: var(--text-primary, #111);
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary, #666);
+}
+
+.errorMsg {
+  padding: 0.75rem 1rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary, #888);
+}
+
+.emptyState a {
+  color: var(--color-primary, #3b82f6);
+}
+
+/* Application cards */
+.appList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.appCard {
+  background: var(--bg-surface, #fff);
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  transition: box-shadow 0.15s;
+}
+
+.appCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.appInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.appJobTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary, #111);
+}
+
+.appJobTitle a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.appJobTitle a:hover {
+  text-decoration: underline;
+}
+
+.appMeta {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #666);
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.appDate {
+  font-size: 0.75rem;
+  color: var(--text-muted, #aaa);
+}
+
+/* Stage badge */
+.stageBadge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.stageApplied {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.stageScreening {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.stageInterview {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.stageOffer {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.stageHired {
+  background: #bbf7d0;
+  color: #14532d;
+}
+
+.stageRejected {
+  background: #fecaca;
+  color: #991b1b;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.pageBtn {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.5rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #333);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pageInfo {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #666);
+}

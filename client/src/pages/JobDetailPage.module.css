@@ -169,13 +169,57 @@
   color: #fff;
   font-size: 0.95rem;
   font-weight: 600;
-  cursor: not-allowed;
+  cursor: pointer;
+}
+
+.applyBtn:disabled {
   opacity: 0.6;
+  cursor: wait;
 }
 
 .applyNote {
   font-size: 0.8rem;
   color: var(--text-secondary, #888);
+  margin-top: 0.5rem;
+}
+
+.appliedState {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  border-radius: 0.5rem;
+  background: #d1fae5;
+  color: #065f46;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.resumeSelect {
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.resumeSelect label {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #666);
+}
+
+.resumeDropdown {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+  max-width: 400px;
+}
+
+.applyError {
+  font-size: 0.8rem;
+  color: #dc2626;
   margin-top: 0.5rem;
 }
 

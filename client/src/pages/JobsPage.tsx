@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { Plus, Search, Trash2, Edit, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Search, Trash2, Edit, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { JobCreateModal } from '../modules/jobs/JobCreateModal';
 import { recruiterListJobs, deleteJob, type Job, type RecruiterJobParams } from '../lib/jobs';
 import styles from './JobsPage.module.css';
@@ -137,6 +138,9 @@ export const JobsPage = () => {
                                         <td>{job.remote ? 'Remote' : 'On-site'}</td>
                                         <td>{job.location || '—'}</td>
                                         <td className={styles.actionsCell}>
+                                            <Link to={`/recruiter/jobs/${job.id}/applicants`} className={styles.actionBtn} aria-label="View applicants" title="View applicants">
+                                                <Users size={16} />
+                                            </Link>
                                             <button className={styles.actionBtn} aria-label="Edit job" onClick={() => handleEdit(job)}>
                                                 <Edit size={16} />
                                             </button>

@@ -14,6 +14,11 @@ import jobRoutes from "./routes/job.routes.js";
 import recruiterRoutes from "./routes/recruiter.routes.js";
 import candidateRoutes from "./routes/candidate.routes.js";
 import resumeRoutes from "./routes/resume.routes.js";
+import {
+  candidateApplicationRouter,
+  recruiterApplicationRouter,
+  applicationMutationRouter,
+} from "./routes/application.routes.js";
 
 const app = express();
 
@@ -58,6 +63,11 @@ app.use("/api/recruiter", recruiterRoutes);
 // Phase 4 routes
 app.use("/api/candidates", candidateRoutes);
 app.use("/api/resumes", resumeRoutes);
+
+// Phase 5 routes (applications)
+app.use("/api", candidateApplicationRouter);
+app.use("/api/recruiter", recruiterApplicationRouter);
+app.use("/api", applicationMutationRouter);
 
 // --------------- Error Handler -----------
 app.use(errorHandler);

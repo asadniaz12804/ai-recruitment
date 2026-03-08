@@ -1,0 +1,181 @@
+/**
+ * Application routes — Phase 5.
+ *
+ * Candidate endpoints:
+ *   POST   /api/jobs/:id/apply          — apply to a job
+ *   GET    /api/applications/me          — list own applications
+ *   GET    /api/applications/:id         — view single application
+ *
+ * Recruiter endpoints (mounted under /api/recruiter):
+ *   GET    /api/recruiter/jobs/:jobId/applications    — list applicants for job
+ *   PATCH  /api/applications/:id/stage                — update stage
+ *   POST   /api/applications/:id/notes                — add recruiter note
+ *
+ * Stage transitions: MVP allows any transition (no strict graph enforcement).
+ */
+import { Router, type Request, type Response, type NextFunction } from "express";
+import { requireAuth } from "../middleware/auth.js";
+import {
+  requireCandidate,
+  requireRecruiterCompany,
+  recruiterCanAccessJob,
+  recruiterCanAccessApplication,
+} from "../middleware/application-access.js";
+import { validate, validateQuery } from "../middleware/validate.js";
+import {
+  applyToJobSchema,
+  updateApplicationStageSchema,
+  addApplicationNoteSchema,
+  candidateApplicationsQuerySchema,
+  recruiterApplicationsQuerySchema,
+  type CandidateApplicationsQuery,
+  type RecruiterApplicationsQuery,
+} from "../lib/validation.applications.js";
+import { sendSuccess } from "../lib/errors.js";
+import * as applicationService from "../services/application.service.js";
+import type { IApplication } from "../models/Application.js";
+
+// ====================================================================
+// Candidate router (mounted at /api)
+// ====================================================================
+
+export const candidateApplicationRouter = Router();
+
+// POST /api/jobs/:id/apply
+candidateApplicationRouter.post(
+  "/jobs/:id/apply",
+  requireAuth,
+  requireCandidate,
+  validate(applyToJobSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await applicationService.applyToJob(
+        req.params.id as string,
+        req.user!.id,
+        req.body
+      );
+      sendSuccess(res, result, 201);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// GET /api/applications/me
+candidateApplicationRouter.get(
+  "/applications/me",
+  requireAuth,
+  requireCandidate,
+  validateQuery(candidateApplicationsQuerySchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = (req as unknown as Record<string, unknown>)
+        .parsedQuery as CandidateApplicationsQuery;
+      const result = await applicationService.listCandidateApplications(
+        req.user!.id,
+        query
+      );
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// GET /api/applications/:id
+candidateApplicationRouter.get(
+  "/applications/:id",
+  requireAuth,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await applicationService.getApplicationById(
+        req.params.id as string,
+        req.user!
+      );
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// ====================================================================
+// Recruiter router (mounted at /api/recruiter)
+// ====================================================================
+
+export const recruiterApplicationRouter = Router();
+
+// GET /api/recruiter/jobs/:jobId/applications
+recruiterApplicationRouter.get(
+  "/jobs/:jobId/applications",
+  requireAuth,
+  requireRecruiterCompany,
+  recruiterCanAccessJob("jobId"),
+  validateQuery(recruiterApplicationsQuerySchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const query = (req as unknown as Record<string, unknown>)
+        .parsedQuery as RecruiterApplicationsQuery;
+      const result = await applicationService.listRecruiterApplications(
+        req.params.jobId as string,
+        query
+      );
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// ====================================================================
+// Shared application mutation routes (mounted at /api)
+// — stage update and notes require recruiter/admin
+// ====================================================================
+
+export const applicationMutationRouter = Router();
+
+// PATCH /api/applications/:id/stage
+applicationMutationRouter.patch(
+  "/applications/:id/stage",
+  requireAuth,
+  requireRecruiterCompany,
+  recruiterCanAccessApplication("id"),
+  validate(updateApplicationStageSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const application = (req as unknown as Record<string, unknown>)
+        .application as IApplication;
+      const result = await applicationService.updateApplicationStage(
+        application,
+        req.body,
+        req.user!.id
+      );
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// POST /api/applications/:id/notes
+applicationMutationRouter.post(
+  "/applications/:id/notes",
+  requireAuth,
+  requireRecruiterCompany,
+  recruiterCanAccessApplication("id"),
+  validate(addApplicationNoteSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const application = (req as unknown as Record<string, unknown>)
+        .application as IApplication;
+      const result = await applicationService.addApplicationNote(
+        application,
+        req.body,
+        req.user!.id
+      );
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);

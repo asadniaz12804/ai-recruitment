@@ -1,0 +1,327 @@
+.wrapper {
+  min-height: 100vh;
+  background: var(--bg-base, #fafafa);
+}
+
+.navbar {
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border-primary, #e5e5e5);
+  background: var(--bg-surface, #fff);
+}
+
+.navInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navBrand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-primary, #111);
+  text-decoration: none;
+}
+
+.navActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.navLink {
+  font-size: 0.85rem;
+  color: var(--color-primary, #3b82f6);
+  text-decoration: none;
+}
+
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-primary, #3b82f6);
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: var(--text-primary, #111);
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  margin: 0 0 1.5rem;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filterBtn {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-secondary, #666);
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.filterBtnActive {
+  background: var(--color-primary, #3b82f6);
+  color: #fff;
+  border-color: var(--color-primary, #3b82f6);
+}
+
+/* Loading / Error / Empty */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary, #666);
+}
+
+.errorMsg {
+  padding: 0.75rem 1rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary, #888);
+}
+
+/* Application cards */
+.appList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.appCard {
+  background: var(--bg-surface, #fff);
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+}
+
+.appHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.candidateInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.candidateName {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary, #111);
+}
+
+.candidateEmail {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #666);
+}
+
+.candidateHeadline {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #888);
+  font-style: italic;
+}
+
+.skillList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.skillTag {
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  background: var(--bg-muted, #f1f1f1);
+  color: var(--text-secondary, #555);
+}
+
+.resumeLink {
+  font-size: 0.8rem;
+  color: var(--color-primary, #3b82f6);
+  text-decoration: none;
+  margin-top: 0.35rem;
+  display: inline-block;
+}
+
+.resumeLink:hover {
+  text-decoration: underline;
+}
+
+.appDate {
+  font-size: 0.75rem;
+  color: var(--text-muted, #aaa);
+  margin-top: 0.35rem;
+}
+
+/* Stage dropdown */
+.stageControl {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stageDropdown {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+/* Notes */
+.notesSection {
+  border-top: 1px solid var(--border-primary, #e5e5e5);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.notesTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary, #111);
+  margin-bottom: 0.5rem;
+}
+
+.notesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.noteItem {
+  font-size: 0.8rem;
+  color: var(--text-primary, #333);
+  background: var(--bg-muted, #f9f9f9);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+.noteDate {
+  font-size: 0.7rem;
+  color: var(--text-muted, #aaa);
+  margin-top: 0.15rem;
+}
+
+.addNoteRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.noteInput {
+  flex: 1;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+}
+
+.noteBtn {
+  padding: 0.4rem 0.85rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--color-primary, #3b82f6);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.noteBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* Stage badge (reusable) */
+.stageBadge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.stageApplied { background: #dbeafe; color: #1e40af; }
+.stageScreening { background: #fef3c7; color: #92400e; }
+.stageInterview { background: #e0e7ff; color: #3730a3; }
+.stageOffer { background: #d1fae5; color: #065f46; }
+.stageHired { background: #bbf7d0; color: #14532d; }
+.stageRejected { background: #fecaca; color: #991b1b; }
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.pageBtn {
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.5rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #333);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pageInfo {
+  display: flex;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #666);
+}
