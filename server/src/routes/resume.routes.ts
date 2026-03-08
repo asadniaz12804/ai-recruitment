@@ -12,6 +12,7 @@ import { sendSuccess, AppError } from "../lib/errors.js";
 import { ALLOWED_RESUME_MIMES } from "../lib/cloudinary.js";
 import { storage } from "../services/storage.service.js";
 import { Resume } from "../models/Resume.js";
+import { enqueueResumeParse } from "../jobs/enqueue.js";
 
 const router = Router();
 
@@ -72,6 +73,9 @@ router.post(
         publicIdOrKey: uploadResult.publicIdOrKey,
         uploadedAt: new Date(),
       });
+
+      // Enqueue AI resume-parse job (no-op when AI_ENABLED=false)
+      enqueueResumeParse(resume._id.toString()).catch(() => {});
 
       sendSuccess(res, formatResume(resume), 201);
     } catch (err) {

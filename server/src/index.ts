@@ -23,6 +23,7 @@ import {
   recruiterPhase6Router,
   candidatePhase6Router,
 } from "./routes/phase6.routes.js";
+import { startWorkers } from "./jobs/index.js";
 
 const app = express();
 
@@ -83,6 +84,7 @@ app.use(errorHandler);
 // --------------- Start -------------------
 async function start() {
   await connectDB();
+  await startWorkers();
   app.listen(PORT, () => {
     logger.info(`Server listening on http://localhost:${PORT}`);
   });

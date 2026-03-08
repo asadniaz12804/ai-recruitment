@@ -459,3 +459,46 @@
 .statusSent { background: #dbeafe; color: #1e40af; }
 .statusAccepted { background: #d1fae5; color: #065f46; }
 .statusDeclined { background: #fecaca; color: #991b1b; }
+
+/* AI Analysis */
+.aiSection {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border-primary, #e5e5e5);
+  background: var(--bg-base, #fafafa);
+}
+
+.aiTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary, #555);
+  margin-bottom: 0.4rem;
+}
+
+.aiBody {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.scoreBadge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.scoreHigh { background: #d1fae5; color: #065f46; }
+.scoreMed  { background: #fef3c7; color: #92400e; }
+.scoreLow  { background: #fecaca; color: #991b1b; }
+
+.aiSummary {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #555);
+  line-height: 1.4;
+  flex: 1;
+  min-width: 200px;
+}

@@ -48,4 +48,36 @@ router.patch(
   }
 );
 
+// --------------- GET /api/admin/queues/health ---------------
+router.get(
+  "/queues/health",
+  async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { isAiEnabled } = await import("../lib/ai-config.js");
+      if (!isAiEnabled()) {
+        sendSuccess(res, { aiEnabled: false, queues: {} });
+        return;
+      }
+      const { getResumeParseQueue, getApplicationScoreQueue } = await import(
+        "../jobs/queues.js"
+      );
+      const rpq = getResumeParseQueue();
+      const asq = getApplicationScoreQueue();
+      const [rpCounts, asCounts] = await Promise.all([
+        rpq.getJobCounts("active", "waiting", "completed", "failed", "delayed"),
+        asq.getJobCounts("active", "waiting", "completed", "failed", "delayed"),
+      ]);
+      sendSuccess(res, {
+        aiEnabled: true,
+        queues: {
+          "resume-parse": rpCounts,
+          "application-score": asCounts,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 export default router;

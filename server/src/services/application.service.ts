@@ -4,6 +4,7 @@ import { Application, type IApplication } from "../models/Application.js";
 import { Job } from "../models/Job.js";
 import { Resume } from "../models/Resume.js";
 import { AppError } from "../lib/errors.js";
+import { enqueueApplicationScore } from "../jobs/enqueue.js";
 import type {
   ApplyToJobInput,
   UpdateApplicationStageInput,
@@ -95,6 +96,9 @@ export async function applyToJob(
     resumeId,
     stage: "applied",
   });
+
+  // Enqueue AI scoring job (no-op when AI_ENABLED=false)
+  enqueueApplicationScore(application._id.toString()).catch(() => {});
 
   return safeApplication(application);
 }
@@ -231,6 +235,8 @@ export async function listRecruiterApplications(
       stage: app.stage,
       createdAt: app.createdAt.toISOString(),
       updatedAt: app.updatedAt.toISOString(),
+      matchScore: app.matchScore ?? null,
+      aiSummary: app.aiSummary ?? null,
       recruiterNotes: app.recruiterNotes.map((n) => ({
         id: n.id,
         authorUserId: n.authorUserId.toString(),

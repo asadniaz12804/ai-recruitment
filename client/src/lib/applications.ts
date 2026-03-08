@@ -50,6 +50,8 @@ export interface RecruiterApplication {
   stage: ApplicationStage;
   createdAt: string;
   updatedAt: string;
+  matchScore: number | null;
+  aiSummary: string | null;
   recruiterNotes: RecruiterNote[];
   candidate: RecruiterApplicationCandidate | null;
   candidateProfile: RecruiterApplicationProfile | null;

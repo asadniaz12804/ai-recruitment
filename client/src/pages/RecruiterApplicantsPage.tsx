@@ -534,6 +534,32 @@ export function RecruiterApplicantsPage() {
                     </div>
                   </div>
 
+                  {/* AI Analysis section */}
+                  {(app.matchScore != null || app.aiSummary) && (
+                    <div className={styles.aiSection}>
+                      <div className={styles.aiTitle}>AI Analysis</div>
+                      <div className={styles.aiBody}>
+                        {app.matchScore != null && (
+                          <span
+                            className={[
+                              styles.scoreBadge,
+                              app.matchScore >= 80
+                                ? styles.scoreHigh
+                                : app.matchScore >= 50
+                                  ? styles.scoreMed
+                                  : styles.scoreLow,
+                            ].join(" ")}
+                          >
+                            Match: {app.matchScore}%
+                          </span>
+                        )}
+                        {app.aiSummary && (
+                          <p className={styles.aiSummary}>{app.aiSummary}</p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Notes section */}
                   <div className={styles.notesSection}>
                     <div className={styles.notesTitle}>Recruiter Notes</div>
