@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+# AI Recruitment Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Intelligent hiring platform — monorepo with a React client and Express API server.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+ai-recruitment/
+├── client/          # Vite + React + TypeScript frontend
+├── server/          # Express + TypeScript API
+├── shared/          # Shared types/utilities (future)
+├── docker-compose.yml
+├── package.json     # Root scripts (concurrently)
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Prerequisites
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Tool                    | Version       |
+| ----------------------- | ------------- |
+| Node.js                 | >= 20         |
+| npm                     | >= 10         |
+| Docker & Docker Compose | Latest stable |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Local Development
+
+### 1. Start infrastructure services
+
+```bash
+docker compose up -d
 ```
+
+This starts:
+
+- **MongoDB** on `localhost:27017`
+- **Redis** on `localhost:6379`
+
+### 2. Install dependencies
+
+```bash
+# From repo root
+npm install
+npm run install:all
+```
+
+### 3. Configure environment
+
+```bash
+cp server/.env.example server/.env
+cp client/.env.example client/.env
+```
+
+Edit the `.env` files if you need to change any defaults.
+
+### 4. Start development servers
+
+```bash
+npm run dev
+```
+
+This starts both apps concurrently:
+
+- **Client:** http://localhost:5173
+- **Server:** http://localhost:5000
+
+### 5. Verify
+
+```bash
+curl http://localhost:5000/health
+# → { "status": "ok", "timestamp": "..." }
+```
+
+## Available Scripts (root)
+
+| Script                | Description                         |
+| --------------------- | ----------------------------------- |
+| `npm run dev`         | Start client + server concurrently  |
+| `npm run dev:client`  | Start only the Vite dev server      |
+| `npm run dev:server`  | Start only the Express dev server   |
+| `npm run build`       | Build both client and server        |
+| `npm run lint`        | Lint client code                    |
+| `npm run install:all` | Install deps in client/ and server/ |
+
+## Tech Stack
+
+- **Frontend:** React 19, TypeScript, Vite 7, React Router 7
+- **Backend:** Express 4, TypeScript, Pino logger
+- **Infrastructure:** MongoDB 7, Redis 7 (via Docker Compose)
