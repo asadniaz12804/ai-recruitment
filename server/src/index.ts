@@ -5,7 +5,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { pinoHttp } from "pino-http";
 import { logger } from "./logger.js";
-import { connectDB } from "./lib/db.js";
+import { connectDB, getIsConnected } from "./lib/db.js";
 import { errorHandler } from "./lib/errors.js";
 import authRoutes from "./routes/auth.routes.js";
 
@@ -28,7 +28,11 @@ app.use(pinoHttp({ logger }));
 
 // --------------- Routes ------------------
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", timestamp: new Date().toISOString() });
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    db: getIsConnected() ? "connected" : "disconnected",
+  });
 });
 
 app.use("/api/auth", authRoutes);
