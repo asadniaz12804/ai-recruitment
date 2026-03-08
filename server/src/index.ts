@@ -10,6 +10,8 @@ import { errorHandler } from "./lib/errors.js";
 import authRoutes from "./routes/auth.routes.js";
 import companyRoutes from "./routes/company.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import jobRoutes from "./routes/job.routes.js";
+import recruiterRoutes from "./routes/recruiter.routes.js";
 
 const app = express();
 
@@ -46,6 +48,10 @@ app.use("/api", authRoutes);
 // Phase 2 routes
 app.use("/api/companies", companyRoutes);
 app.use("/api/admin", adminRoutes);
+
+// Phase 3 routes
+app.use("/api/jobs", jobRoutes);
+app.use("/api/recruiter", recruiterRoutes);
 
 // --------------- Error Handler -----------
 app.use(errorHandler);

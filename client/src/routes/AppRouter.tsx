@@ -13,6 +13,8 @@ import { SettingsPage } from '../pages/SettingsPage';
 import { PublicJobPage } from '../pages/PublicJobPage';
 import { AdminUsersPage } from '../pages/AdminUsersPage';
 import { CompanyCreatePage } from '../pages/CompanyCreatePage';
+import { JobBoardPage } from '../pages/JobBoardPage';
+import { JobDetailPage } from '../pages/JobDetailPage';
 import { RequireAuth } from '../components/shared/RequireAuth';
 
 export const AppRouter = () => {
@@ -28,6 +30,10 @@ export const AppRouter = () => {
                 {/* Auth Pages */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+
+                {/* Public Job Board */}
+                <Route path="/jobs" element={<JobBoardPage />} />
+                <Route path="/jobs/:id" element={<JobDetailPage />} />
 
                 {/* Public Candidate Job Application View */}
                 <Route path="/ai-recruitment/:companyName/jobs/:jobSlug" element={<PublicJobPage />} />

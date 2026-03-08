@@ -169,3 +169,18 @@
     background-color: var(--surface-hover);
     color: var(--text-primary);
 }
+
+/* Pagination */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    border-top: var(--border-width) solid var(--border-subtle);
+}
+
+.pageInfo {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
