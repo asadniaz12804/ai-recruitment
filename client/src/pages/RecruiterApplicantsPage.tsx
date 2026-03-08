@@ -5,10 +5,19 @@ import {
   recruiterListApplications,
   updateApplicationStage,
   addApplicationNote,
+  createInterview,
+  listInterviews,
+  createOffer,
+  listOffers,
+  updateOfferStatus,
   APPLICATION_STAGES,
   type RecruiterApplication,
   type PaginatedApplications,
   type ApplicationStage,
+  type InterviewRecord,
+  type InterviewMode,
+  type OfferRecord,
+  type OfferStatus,
 } from "../lib/applications";
 import { getJob, type Job } from "../lib/jobs";
 import { ThemeToggle } from "../components/shared/ThemeToggle";
@@ -24,6 +33,288 @@ function stageBadgeClass(stage: string): string {
     rejected: styles.stageRejected,
   };
   return `${styles.stageBadge} ${map[stage] ?? ""}`;
+}
+
+// --------------- Interview section component ---------------
+function InterviewSection({
+  appId,
+  onUpdate,
+}: {
+  appId: string;
+  onUpdate: () => void;
+}) {
+  const [showForm, setShowForm] = useState(false);
+  const [interviews, setInterviews] = useState<InterviewRecord[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [scheduledAt, setScheduledAt] = useState("");
+  const [mode, setMode] = useState<InterviewMode>("video");
+  const [locationOrLink, setLocationOrLink] = useState("");
+  const [notes, setNotes] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  function loadInterviews() {
+    listInterviews(appId, { limit: 50 })
+      .then((res) => {
+        setInterviews(res.items);
+        setLoaded(true);
+      })
+      .catch(() => {});
+  }
+
+  useEffect(() => {
+    loadInterviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appId]);
+
+  async function handleCreate() {
+    if (!scheduledAt || saving) return;
+    setSaving(true);
+    try {
+      await createInterview(appId, {
+        scheduledAt: new Date(scheduledAt).toISOString(),
+        mode,
+        locationOrLink: locationOrLink || undefined,
+        notes: notes || undefined,
+      });
+      setScheduledAt("");
+      setLocationOrLink("");
+      setNotes("");
+      setShowForm(false);
+      loadInterviews();
+      onUpdate();
+    } catch {
+      // silent
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className={styles.sectionDivider}>
+      <div className={styles.sectionHeader}>
+        <span className={styles.sectionTitle}>
+          Interviews {loaded ? `(${interviews.length})` : ""}
+        </span>
+        <button
+          className={styles.toggleBtn}
+          onClick={() => setShowForm((v) => !v)}
+        >
+          {showForm ? "Cancel" : "+ Schedule"}
+        </button>
+      </div>
+
+      {showForm && (
+        <div style={{ marginBottom: "0.5rem" }}>
+          <div className={styles.formRow}>
+            <input
+              type="datetime-local"
+              className={styles.inputSm}
+              value={scheduledAt}
+              onChange={(e) => setScheduledAt(e.target.value)}
+            />
+            <select
+              className={styles.selectSm}
+              value={mode}
+              onChange={(e) => setMode(e.target.value as InterviewMode)}
+            >
+              <option value="phone">Phone</option>
+              <option value="video">Video</option>
+              <option value="onsite">Onsite</option>
+            </select>
+            <input
+              className={styles.inputSm}
+              placeholder="Link / location"
+              value={locationOrLink}
+              onChange={(e) => setLocationOrLink(e.target.value)}
+            />
+          </div>
+          <textarea
+            className={styles.textareaSm}
+            placeholder="Notes (optional)"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+          <button
+            className={styles.btnPrimary}
+            onClick={handleCreate}
+            disabled={!scheduledAt || saving}
+            style={{ marginTop: "0.35rem" }}
+          >
+            {saving ? "Saving…" : "Schedule Interview"}
+          </button>
+        </div>
+      )}
+
+      {interviews.map((iv) => (
+        <div key={iv.id} className={styles.listItem}>
+          <strong>{iv.mode}</strong> — {new Date(iv.scheduledAt).toLocaleString()}
+          {iv.locationOrLink && <span> · {iv.locationOrLink}</span>}
+          {iv.notes && <div className={styles.listMeta}>{iv.notes}</div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// --------------- Offer section component ---------------
+function offerStatusClass(status: string): string {
+  const map: Record<string, string> = {
+    draft: styles.statusDraft,
+    sent: styles.statusSent,
+    accepted: styles.statusAccepted,
+    declined: styles.statusDeclined,
+  };
+  return `${styles.statusBadge} ${map[status] ?? ""}`;
+}
+
+function OfferSection({
+  appId,
+  onUpdate,
+}: {
+  appId: string;
+  onUpdate: () => void;
+}) {
+  const [showForm, setShowForm] = useState(false);
+  const [offers, setOffers] = useState<OfferRecord[]>([]);
+  const [loaded, setLoaded] = useState(false);
+  const [salaryMin, setSalaryMin] = useState("");
+  const [salaryMax, setSalaryMax] = useState("");
+  const [currency, setCurrency] = useState("USD");
+  const [message, setMessage] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  function loadOffers() {
+    listOffers(appId, { limit: 50 })
+      .then((res) => {
+        setOffers(res.items);
+        setLoaded(true);
+      })
+      .catch(() => {});
+  }
+
+  useEffect(() => {
+    loadOffers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appId]);
+
+  async function handleCreate() {
+    if (saving) return;
+    setSaving(true);
+    try {
+      await createOffer(appId, {
+        salaryMin: salaryMin ? Number(salaryMin) : undefined,
+        salaryMax: salaryMax ? Number(salaryMax) : undefined,
+        currency: currency || "USD",
+        message: message || undefined,
+      });
+      setSalaryMin("");
+      setSalaryMax("");
+      setMessage("");
+      setShowForm(false);
+      loadOffers();
+      onUpdate();
+    } catch {
+      // silent
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleSend(offerId: string) {
+    try {
+      await updateOfferStatus(offerId, "sent" as OfferStatus);
+      loadOffers();
+    } catch {
+      // silent
+    }
+  }
+
+  return (
+    <div className={styles.sectionDivider}>
+      <div className={styles.sectionHeader}>
+        <span className={styles.sectionTitle}>
+          Offers {loaded ? `(${offers.length})` : ""}
+        </span>
+        <button
+          className={styles.toggleBtn}
+          onClick={() => setShowForm((v) => !v)}
+        >
+          {showForm ? "Cancel" : "+ Create Offer"}
+        </button>
+      </div>
+
+      {showForm && (
+        <div style={{ marginBottom: "0.5rem" }}>
+          <div className={styles.formRow}>
+            <input
+              type="number"
+              className={styles.inputSm}
+              placeholder="Min salary"
+              value={salaryMin}
+              onChange={(e) => setSalaryMin(e.target.value)}
+              min={0}
+            />
+            <input
+              type="number"
+              className={styles.inputSm}
+              placeholder="Max salary"
+              value={salaryMax}
+              onChange={(e) => setSalaryMax(e.target.value)}
+              min={0}
+            />
+            <input
+              className={styles.inputSm}
+              placeholder="Currency"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+              style={{ width: "70px" }}
+            />
+          </div>
+          <textarea
+            className={styles.textareaSm}
+            placeholder="Message to candidate (optional)"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <button
+            className={styles.btnPrimary}
+            onClick={handleCreate}
+            disabled={saving}
+            style={{ marginTop: "0.35rem" }}
+          >
+            {saving ? "Saving…" : "Create Offer"}
+          </button>
+        </div>
+      )}
+
+      {offers.map((o) => (
+        <div key={o.id} className={styles.listItem}>
+          <span className={offerStatusClass(o.status)}>{o.status}</span>
+          {(o.salaryMin != null || o.salaryMax != null) && (
+            <span>
+              {" — "}
+              {o.salaryMin != null && `${o.currency} ${o.salaryMin.toLocaleString()}`}
+              {o.salaryMin != null && o.salaryMax != null && " – "}
+              {o.salaryMax != null && `${o.salaryMin == null ? `${o.currency} ` : ""}${o.salaryMax.toLocaleString()}`}
+            </span>
+          )}
+          {o.message && <div className={styles.listMeta}>{o.message}</div>}
+          <div className={styles.listMeta}>
+            {new Date(o.createdAt).toLocaleString()}
+          </div>
+          {o.status === "draft" && (
+            <button
+              className={styles.btnSuccess}
+              onClick={() => handleSend(o.id)}
+              style={{ marginTop: "0.25rem" }}
+            >
+              Send Offer
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 }
 
 // --------------- Note input component ---------------
@@ -260,6 +551,12 @@ export function RecruiterApplicantsPage() {
                     )}
                     <NoteInput appId={app.id} onNoteAdded={fetchApplications} />
                   </div>
+
+                  {/* Interview section */}
+                  <InterviewSection appId={app.id} onUpdate={fetchApplications} />
+
+                  {/* Offer section */}
+                  <OfferSection appId={app.id} onUpdate={fetchApplications} />
                 </div>
               ))}
             </div>

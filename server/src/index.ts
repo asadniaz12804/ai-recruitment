@@ -19,6 +19,10 @@ import {
   recruiterApplicationRouter,
   applicationMutationRouter,
 } from "./routes/application.routes.js";
+import {
+  recruiterPhase6Router,
+  candidatePhase6Router,
+} from "./routes/phase6.routes.js";
 
 const app = express();
 
@@ -68,6 +72,10 @@ app.use("/api/resumes", resumeRoutes);
 app.use("/api", candidateApplicationRouter);
 app.use("/api/recruiter", recruiterApplicationRouter);
 app.use("/api", applicationMutationRouter);
+
+// Phase 6 routes (interviews & offers)
+app.use("/api", recruiterPhase6Router);
+app.use("/api/candidate", candidatePhase6Router);
 
 // --------------- Error Handler -----------
 app.use(errorHandler);

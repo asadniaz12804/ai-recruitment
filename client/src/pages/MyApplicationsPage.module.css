@@ -200,3 +200,105 @@
   font-size: 0.8rem;
   color: var(--text-secondary, #666);
 }
+
+/* Phase 6: expandable detail */
+.appCardExpanded {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.appCardTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+}
+
+.expandHint {
+  font-size: 0.7rem;
+  color: var(--text-muted, #aaa);
+  margin-top: 0.2rem;
+}
+
+.detailSection {
+  border-top: 1px solid var(--border-primary, #e5e5e5);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.detailSectionTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary, #111);
+  margin-bottom: 0.5rem;
+}
+
+.detailItem {
+  font-size: 0.8rem;
+  color: var(--text-primary, #333);
+  background: var(--bg-muted, #f9f9f9);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.detailMeta {
+  font-size: 0.7rem;
+  color: var(--text-muted, #aaa);
+  margin-top: 0.1rem;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusDraft { background: #f3f4f6; color: #6b7280; }
+.statusSent { background: #dbeafe; color: #1e40af; }
+.statusAccepted { background: #d1fae5; color: #065f46; }
+.statusDeclined { background: #fecaca; color: #991b1b; }
+
+.offerActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.btnAccept {
+  padding: 0.3rem 0.7rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnAccept:disabled { opacity: 0.5; cursor: default; }
+
+.btnDecline {
+  padding: 0.3rem 0.7rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: #dc2626;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnDecline:disabled { opacity: 0.5; cursor: default; }
+
+.emptyDetail {
+  font-size: 0.78rem;
+  color: var(--text-muted, #aaa);
+  font-style: italic;
+}
+  color: var(--text-secondary, #666);
+}

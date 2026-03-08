@@ -164,3 +164,160 @@ export async function addApplicationNote(
     body: { text },
   });
 }
+
+// ==================== Phase 6: Interviews ====================
+
+export type InterviewMode = "phone" | "video" | "onsite";
+
+export interface InterviewRecord {
+  id: string;
+  applicationId: string;
+  companyId: string;
+  candidateUserId: string;
+  scheduledAt: string;
+  mode: InterviewMode;
+  locationOrLink: string | null;
+  notes: string | null;
+  createdByUserId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaginatedInterviews {
+  items: InterviewRecord[];
+  pagination: Pagination;
+}
+
+/** Recruiter: schedule an interview for an application */
+export async function createInterview(
+  applicationId: string,
+  payload: {
+    scheduledAt: string;
+    mode: InterviewMode;
+    locationOrLink?: string;
+    notes?: string;
+  }
+): Promise<InterviewRecord> {
+  return api<InterviewRecord>(
+    `/api/applications/${applicationId}/interviews`,
+    { method: "POST", body: payload }
+  );
+}
+
+/** Recruiter: list interviews for an application */
+export async function listInterviews(
+  applicationId: string,
+  params?: { page?: number; limit?: number }
+): Promise<PaginatedInterviews> {
+  const sp = new URLSearchParams();
+  if (params?.page) sp.set("page", String(params.page));
+  if (params?.limit) sp.set("limit", String(params.limit));
+  const qs = sp.toString();
+  return api<PaginatedInterviews>(
+    `/api/applications/${applicationId}/interviews${qs ? `?${qs}` : ""}`
+  );
+}
+
+/** Candidate: list interviews (read-only) */
+export async function candidateListInterviews(
+  applicationId: string,
+  params?: { page?: number; limit?: number }
+): Promise<PaginatedInterviews> {
+  const sp = new URLSearchParams();
+  if (params?.page) sp.set("page", String(params.page));
+  if (params?.limit) sp.set("limit", String(params.limit));
+  const qs = sp.toString();
+  return api<PaginatedInterviews>(
+    `/api/candidate/applications/${applicationId}/interviews${qs ? `?${qs}` : ""}`
+  );
+}
+
+// ==================== Phase 6: Offers ====================
+
+export type OfferStatus = "draft" | "sent" | "accepted" | "declined";
+
+export interface OfferRecord {
+  id: string;
+  applicationId: string;
+  companyId: string;
+  candidateUserId: string;
+  salaryMin: number | null;
+  salaryMax: number | null;
+  currency: string;
+  message: string | null;
+  status: OfferStatus;
+  createdByUserId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaginatedOffers {
+  items: OfferRecord[];
+  pagination: Pagination;
+}
+
+/** Recruiter: create an offer for an application */
+export async function createOffer(
+  applicationId: string,
+  payload: {
+    salaryMin?: number;
+    salaryMax?: number;
+    currency?: string;
+    message?: string;
+  }
+): Promise<OfferRecord> {
+  return api<OfferRecord>(
+    `/api/applications/${applicationId}/offers`,
+    { method: "POST", body: payload }
+  );
+}
+
+/** Recruiter: list offers for an application */
+export async function listOffers(
+  applicationId: string,
+  params?: { page?: number; limit?: number }
+): Promise<PaginatedOffers> {
+  const sp = new URLSearchParams();
+  if (params?.page) sp.set("page", String(params.page));
+  if (params?.limit) sp.set("limit", String(params.limit));
+  const qs = sp.toString();
+  return api<PaginatedOffers>(
+    `/api/applications/${applicationId}/offers${qs ? `?${qs}` : ""}`
+  );
+}
+
+/** Candidate: list offers (read-only) */
+export async function candidateListOffers(
+  applicationId: string,
+  params?: { page?: number; limit?: number }
+): Promise<PaginatedOffers> {
+  const sp = new URLSearchParams();
+  if (params?.page) sp.set("page", String(params.page));
+  if (params?.limit) sp.set("limit", String(params.limit));
+  const qs = sp.toString();
+  return api<PaginatedOffers>(
+    `/api/candidate/applications/${applicationId}/offers${qs ? `?${qs}` : ""}`
+  );
+}
+
+/** Recruiter: update offer status (draft→sent) */
+export async function updateOfferStatus(
+  offerId: string,
+  status: OfferStatus
+): Promise<OfferRecord> {
+  return api<OfferRecord>(`/api/offers/${offerId}/status`, {
+    method: "PATCH",
+    body: { status },
+  });
+}
+
+/** Candidate: accept or decline offer */
+export async function candidateRespondToOffer(
+  offerId: string,
+  status: "accepted" | "declined"
+): Promise<OfferRecord> {
+  return api<OfferRecord>(`/api/candidate/offers/${offerId}/status`, {
+    method: "PATCH",
+    body: { status },
+  });
+}

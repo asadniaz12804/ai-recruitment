@@ -143,3 +143,33 @@ export function recruiterCanAccessApplication(paramName = "id") {
     next();
   };
 }
+
+/**
+ * Middleware: ensures authenticated candidate owns the application.
+ * Attaches the application to (req as any).application.
+ * Must be used after requireAuth + requireCandidate.
+ */
+export function candidateOwnsApplication(paramName = "applicationId") {
+  return async (req: Request, _res: Response, next: NextFunction) => {
+    if (!req.user) {
+      return next(new AppError(401, "unauthorized", "Not authenticated"));
+    }
+
+    const appId = req.params[paramName] as string | undefined;
+    if (!appId || !appId.match(/^[0-9a-fA-F]{24}$/)) {
+      return next(new AppError(404, "not_found", "Application not found"));
+    }
+
+    const application = await Application.findById(appId);
+    if (!application) {
+      return next(new AppError(404, "not_found", "Application not found"));
+    }
+
+    if (application.candidateUserId.toString() !== req.user.id) {
+      return next(new AppError(404, "not_found", "Application not found"));
+    }
+
+    (req as unknown as Record<string, unknown>).application = application;
+    next();
+  };
+}

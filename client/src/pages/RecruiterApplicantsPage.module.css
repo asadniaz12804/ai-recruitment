@@ -325,3 +325,137 @@
   font-size: 0.8rem;
   color: var(--text-secondary, #666);
 }
+
+/* Phase 6: Interview & Offer sections */
+.sectionDivider {
+  border-top: 1px solid var(--border-primary, #e5e5e5);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.sectionTitle {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary, #111);
+}
+
+.toggleBtn {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.4rem;
+  font-size: 0.72rem;
+  background: var(--bg-surface, #fff);
+  color: var(--color-primary, #3b82f6);
+  cursor: pointer;
+}
+
+.toggleBtn:hover {
+  background: var(--bg-muted, #f1f1f1);
+}
+
+.formRow {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.inputSm {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.4rem;
+  font-size: 0.78rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+  min-width: 100px;
+}
+
+.selectSm {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.4rem;
+  font-size: 0.78rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+  cursor: pointer;
+}
+
+.textareaSm {
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--border-primary, #e5e5e5);
+  border-radius: 0.4rem;
+  font-size: 0.78rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+  width: 100%;
+  resize: vertical;
+  min-height: 50px;
+}
+
+.btnPrimary {
+  padding: 0.35rem 0.85rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: var(--color-primary, #3b82f6);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btnSuccess {
+  padding: 0.25rem 0.6rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnSuccess:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.listItem {
+  font-size: 0.8rem;
+  color: var(--text-primary, #333);
+  background: var(--bg-muted, #f9f9f9);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.listMeta {
+  font-size: 0.7rem;
+  color: var(--text-muted, #aaa);
+  margin-top: 0.1rem;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.statusDraft { background: #f3f4f6; color: #6b7280; }
+.statusSent { background: #dbeafe; color: #1e40af; }
+.statusAccepted { background: #d1fae5; color: #065f46; }
+.statusDeclined { background: #fecaca; color: #991b1b; }
