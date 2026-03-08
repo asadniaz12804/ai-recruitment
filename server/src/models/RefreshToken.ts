@@ -22,8 +22,6 @@ const refreshTokenSchema = new Schema<IRefreshToken>(
 
 // Clean up expired tokens automatically (TTL index)
 refreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-// Lookup by jti
-refreshTokenSchema.index({ jti: 1 });
 // Lookup by userId for revocation
 refreshTokenSchema.index({ userId: 1 });
 
