@@ -15,6 +15,7 @@ import { AdminUsersPage } from '../pages/AdminUsersPage';
 import { CompanyCreatePage } from '../pages/CompanyCreatePage';
 import { JobBoardPage } from '../pages/JobBoardPage';
 import { JobDetailPage } from '../pages/JobDetailPage';
+import { CandidateProfilePage } from '../pages/CandidateProfilePage';
 import { RequireAuth } from '../components/shared/RequireAuth';
 
 export const AppRouter = () => {
@@ -49,6 +50,13 @@ export const AppRouter = () => {
                 <Route path="/company/new" element={
                     <RequireAuth roles={['admin', 'recruiter']}>
                         <CompanyCreatePage />
+                    </RequireAuth>
+                } />
+
+                {/* Candidate profile + resumes (candidate only) */}
+                <Route path="/candidate/profile" element={
+                    <RequireAuth roles={['candidate']}>
+                        <CandidateProfilePage />
                     </RequireAuth>
                 } />
 

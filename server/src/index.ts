@@ -12,6 +12,8 @@ import companyRoutes from "./routes/company.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import jobRoutes from "./routes/job.routes.js";
 import recruiterRoutes from "./routes/recruiter.routes.js";
+import candidateRoutes from "./routes/candidate.routes.js";
+import resumeRoutes from "./routes/resume.routes.js";
 
 const app = express();
 
@@ -52,6 +54,10 @@ app.use("/api/admin", adminRoutes);
 // Phase 3 routes
 app.use("/api/jobs", jobRoutes);
 app.use("/api/recruiter", recruiterRoutes);
+
+// Phase 4 routes
+app.use("/api/candidates", candidateRoutes);
+app.use("/api/resumes", resumeRoutes);
 
 // --------------- Error Handler -----------
 app.use(errorHandler);
