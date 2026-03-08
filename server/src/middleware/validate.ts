@@ -17,3 +17,20 @@ export function validate(schema: ZodSchema) {
     next();
   };
 }
+
+/**
+ * Validates req.query against a Zod schema.
+ */
+export function validateQuery(schema: ZodSchema) {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.query);
+    if (!result.success) {
+      return next(
+        new AppError(400, "validation_error", "Query validation failed", result.error.issues)
+      );
+    }
+    // Replace query with parsed/transformed data
+    (req as unknown as Record<string, unknown>).parsedQuery = result.data;
+    next();
+  };
+}

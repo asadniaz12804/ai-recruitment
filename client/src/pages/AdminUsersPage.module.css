@@ -1,0 +1,200 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary, #111);
+  margin: 0 0 0.25rem;
+}
+
+.subtitle {
+  color: var(--text-secondary, #666);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filterSelect,
+.filterInput {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-primary, #ddd);
+  border-radius: 0.5rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+  font-size: 0.875rem;
+}
+
+.filterInput {
+  min-width: 220px;
+}
+
+/* Table */
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border-primary, #ddd);
+  border-radius: 0.75rem;
+  background: var(--bg-surface, #fff);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-primary, #eee);
+}
+
+.table th {
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  background: var(--bg-muted, #f9f9f9);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.roleBadge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.roleAdmin {
+  background: #fde68a;
+  color: #92400e;
+}
+
+.roleRecruiter {
+  background: #bfdbfe;
+  color: #1e40af;
+}
+
+.roleCandidate {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+/* Actions cell */
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.actionSelect {
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--border-primary, #ddd);
+  border-radius: 0.4rem;
+  font-size: 0.8rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+}
+
+.saveBtn {
+  padding: 0.3rem 0.75rem;
+  border: none;
+  border-radius: 0.4rem;
+  background: var(--color-primary, #3b82f6);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.saveBtn:hover {
+  opacity: 0.9;
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pageBtn {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--border-primary, #ddd);
+  border-radius: 0.4rem;
+  background: var(--bg-surface, #fff);
+  color: var(--text-primary, #111);
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.pageBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #666);
+}
+
+/* Messages */
+.successMsg {
+  padding: 0.75rem 1rem;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.errorMsg {
+  padding: 0.75rem 1rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-secondary, #666);
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary, #666);
+}

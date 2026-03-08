@@ -20,6 +20,7 @@ function safeUser(user: IUser) {
     role: user.role,
     name: user.name ?? null,
     avatarUrl: user.avatarUrl ?? null,
+    companyId: user.companyId?.toString() ?? null,
     createdAt: user.createdAt.toISOString(),
   };
 }

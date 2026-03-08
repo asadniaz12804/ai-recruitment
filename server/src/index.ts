@@ -8,6 +8,8 @@ import { logger } from "./logger.js";
 import { connectDB, getIsConnected } from "./lib/db.js";
 import { errorHandler } from "./lib/errors.js";
 import authRoutes from "./routes/auth.routes.js";
+import companyRoutes from "./routes/company.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 
@@ -40,6 +42,10 @@ app.use("/api/auth", authRoutes);
 // /api/me is mounted under auth routes (GET /api/auth/me)
 // But per spec it should also be at /api/me:
 app.use("/api", authRoutes);
+
+// Phase 2 routes
+app.use("/api/companies", companyRoutes);
+app.use("/api/admin", adminRoutes);
 
 // --------------- Error Handler -----------
 app.use(errorHandler);

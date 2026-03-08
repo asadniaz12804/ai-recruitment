@@ -6,6 +6,7 @@ export interface AuthUser {
   role: "admin" | "recruiter" | "candidate";
   name: string | null;
   avatarUrl: string | null;
+  companyId?: string | null;
   createdAt: string;
 }
 
