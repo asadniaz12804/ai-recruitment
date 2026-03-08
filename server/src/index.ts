@@ -7,6 +7,8 @@ import { pinoHttp } from "pino-http";
 import { logger } from "./logger.js";
 import { connectDB, getIsConnected } from "./lib/db.js";
 import { errorHandler } from "./lib/errors.js";
+import { mongoSanitize } from "./middleware/sanitize.js";
+import { generalLimiter } from "./middleware/rate-limit.js";
 import authRoutes from "./routes/auth.routes.js";
 import companyRoutes from "./routes/company.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
@@ -28,19 +30,36 @@ import { startWorkers } from "./jobs/index.js";
 const app = express();
 
 const PORT = parseInt(process.env.PORT ?? "5000", 10);
+
+// --------------- CORS allowlist ---------------
+// In production, set CORS_ORIGIN to a comma-separated list of allowed origins.
+// e.g. CORS_ORIGIN=https://app.example.com,https://admin.example.com
 const CORS_ORIGIN = process.env.CORS_ORIGIN ?? "http://localhost:5173";
+const allowedOrigins = CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean);
 
 // --------------- Middleware ---------------
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: process.env.NODE_ENV === "production" ? undefined : false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
 app.use(
   cors({
-    origin: CORS_ORIGIN,
+    origin(origin, callback) {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
-app.use(pinoHttp({ logger }));
+app.use(mongoSanitize);
+app.use(generalLimiter);
+app.use(pinoHttp({ logger, autoLogging: process.env.NODE_ENV !== "test" }));
 
 // --------------- Routes ------------------
 app.get("/health", (_req, res) => {

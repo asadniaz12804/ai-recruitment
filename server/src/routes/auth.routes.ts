@@ -1,26 +1,12 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
-import rateLimit from "express-rate-limit";
 import { validate } from "../middleware/validate.js";
 import { requireAuth } from "../middleware/auth.js";
+import { authLimiter } from "../middleware/rate-limit.js";
 import { registerSchema, loginSchema } from "../lib/validation.js";
 import { sendSuccess } from "../lib/errors.js";
 import * as authService from "../services/auth.service.js";
 
 const router = Router();
-
-// Rate limiter for auth endpoints
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // 20 requests per window
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: {
-    error: {
-      code: "rate_limit",
-      message: "Too many requests, please try again later",
-    },
-  },
-});
 
 // --------------- POST /api/auth/register ---------------
 router.post(

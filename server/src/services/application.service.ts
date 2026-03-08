@@ -4,6 +4,7 @@ import { Application, type IApplication } from "../models/Application.js";
 import { Job } from "../models/Job.js";
 import { Resume } from "../models/Resume.js";
 import { AppError } from "../lib/errors.js";
+import { audit } from "../lib/audit.js";
 import { enqueueApplicationScore } from "../jobs/enqueue.js";
 import type {
   ApplyToJobInput,
@@ -303,6 +304,15 @@ export async function updateApplicationStage(
   });
 
   await application.save();
+
+  await audit({
+    actorUserId: changedByUserId,
+    action: "application.stageChange",
+    entityType: "Application",
+    entityId: application._id.toString(),
+    metadata: { from: previousStage, to: newStage },
+  });
+
   return safeApplication(application);
 }
 

@@ -1,11 +1,12 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
-import { validate, validateQuery } from "../middleware/validate.js";
+import { validate, validateQuery, validateParams } from "../middleware/validate.js";
 import {
   adminUpdateUserSchema,
   adminListUsersQuerySchema,
   type AdminListUsersQuery,
 } from "../lib/validation.phase2.js";
+import { idParamSchema } from "../lib/validation.params.js";
 import { sendSuccess } from "../lib/errors.js";
 import * as adminService from "../services/admin.service.js";
 
@@ -33,6 +34,7 @@ router.get(
 // --------------- PATCH /api/admin/users/:id ---------------
 router.patch(
   "/users/:id",
+  validateParams(idParamSchema),
   validate(adminUpdateUserSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {

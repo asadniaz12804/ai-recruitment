@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+
+    env:
+      NODE_ENV: test
+      MONGODB_URI: mongodb://localhost:27017/ai_recruitment_ci
+      TEST_MONGODB_URI: mongodb://localhost:27017
+      JWT_ACCESS_SECRET: ci-test-access-secret
+      JWT_REFRESH_SECRET: ci-test-refresh-secret
+      AI_ENABLED: "false"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            client/package-lock.json
+            server/package-lock.json
+
+      - name: Install client dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Install server dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Lint client
+        working-directory: client
+        run: npm run lint
+
+      - name: TypeScript check (server)
+        working-directory: server
+        run: npx tsc --noEmit
+
+      - name: Run server tests
+        working-directory: server
+        run: npm test

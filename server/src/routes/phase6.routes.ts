@@ -21,7 +21,8 @@ import {
   recruiterCanAccessApplication,
   candidateOwnsApplication,
 } from "../middleware/application-access.js";
-import { validate, validateQuery } from "../middleware/validate.js";
+import { validate, validateQuery, validateParams } from "../middleware/validate.js";
+import { writeLimiter } from "../middleware/rate-limit.js";
 import {
   createInterviewSchema,
   listInterviewsQuerySchema,
@@ -31,6 +32,7 @@ import {
   type ListInterviewsQuery,
   type ListOffersQuery,
 } from "../lib/validation.phase6.js";
+import { applicationIdParamSchema, offerIdParamSchema } from "../lib/validation.params.js";
 import { sendSuccess } from "../lib/errors.js";
 import * as phase6Service from "../services/phase6.service.js";
 
@@ -45,7 +47,9 @@ recruiterPhase6Router.post(
   "/applications/:applicationId/interviews",
   requireAuth,
   requireRecruiterCompany,
+  validateParams(applicationIdParamSchema),
   recruiterCanAccessApplication("applicationId"),
+  writeLimiter,
   validate(createInterviewSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -69,6 +73,7 @@ recruiterPhase6Router.get(
   "/applications/:applicationId/interviews",
   requireAuth,
   requireRecruiterCompany,
+  validateParams(applicationIdParamSchema),
   recruiterCanAccessApplication("applicationId"),
   validateQuery(listInterviewsQuerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -91,7 +96,9 @@ recruiterPhase6Router.post(
   "/applications/:applicationId/offers",
   requireAuth,
   requireRecruiterCompany,
+  validateParams(applicationIdParamSchema),
   recruiterCanAccessApplication("applicationId"),
+  writeLimiter,
   validate(createOfferSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -115,6 +122,7 @@ recruiterPhase6Router.get(
   "/applications/:applicationId/offers",
   requireAuth,
   requireRecruiterCompany,
+  validateParams(applicationIdParamSchema),
   recruiterCanAccessApplication("applicationId"),
   validateQuery(listOffersQuerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -137,6 +145,7 @@ recruiterPhase6Router.patch(
   "/offers/:offerId/status",
   requireAuth,
   requireRecruiterCompany,
+  validateParams(offerIdParamSchema),
   validate(updateOfferStatusSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -163,6 +172,7 @@ candidatePhase6Router.get(
   "/applications/:applicationId/interviews",
   requireAuth,
   requireCandidate,
+  validateParams(applicationIdParamSchema),
   candidateOwnsApplication("applicationId"),
   validateQuery(listInterviewsQuerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -185,6 +195,7 @@ candidatePhase6Router.get(
   "/applications/:applicationId/offers",
   requireAuth,
   requireCandidate,
+  validateParams(applicationIdParamSchema),
   candidateOwnsApplication("applicationId"),
   validateQuery(listOffersQuerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -207,6 +218,7 @@ candidatePhase6Router.patch(
   "/offers/:offerId/status",
   requireAuth,
   requireCandidate,
+  validateParams(offerIdParamSchema),
   validate(updateOfferStatusSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {

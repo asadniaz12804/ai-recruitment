@@ -1,13 +1,15 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { requireAuth } from "../middleware/auth.js";
 import { requireRecruiterWithCompany, requireJobOwnerCompany } from "../middleware/job-access.js";
-import { validate, validateQuery } from "../middleware/validate.js";
+import { validate, validateQuery, validateParams } from "../middleware/validate.js";
+import { writeLimiter } from "../middleware/rate-limit.js";
 import {
   createJobSchema,
   updateJobSchema,
   publicJobListQuerySchema,
   type PublicJobListQuery,
 } from "../lib/validation.jobs.js";
+import { idParamSchema } from "../lib/validation.params.js";
 import { sendSuccess } from "../lib/errors.js";
 import { verifyAccessToken } from "../lib/tokens.js";
 import * as jobService from "../services/job.service.js";
@@ -53,6 +55,7 @@ router.get(
 // --------------- GET /api/jobs/:id (public for open, auth for draft/closed) ---------------
 router.get(
   "/:id",
+  validateParams(idParamSchema),
   optionalAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -75,6 +78,7 @@ router.get(
 router.post(
   "/",
   requireAuth,
+  writeLimiter,
   requireRecruiterWithCompany,
   validate(createJobSchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -91,6 +95,7 @@ router.post(
 router.patch(
   "/:id",
   requireAuth,
+  validateParams(idParamSchema),
   requireJobOwnerCompany("id"),
   validate(updateJobSchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -108,10 +113,11 @@ router.patch(
 router.delete(
   "/:id",
   requireAuth,
+  validateParams(idParamSchema),
   requireJobOwnerCompany("id"),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await jobService.deleteJob(req.params.id as string);
+      const result = await jobService.deleteJob(req.params.id as string, req.user!.id);
       sendSuccess(res, result);
     } catch (err) {
       next(err);

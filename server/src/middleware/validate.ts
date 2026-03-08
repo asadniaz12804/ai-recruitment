@@ -34,3 +34,19 @@ export function validateQuery(schema: ZodSchema) {
     next();
   };
 }
+
+/**
+ * Validates req.params against a Zod schema.
+ */
+export function validateParams(schema: ZodSchema) {
+  return (req: Request, _res: Response, next: NextFunction) => {
+    const result = schema.safeParse(req.params);
+    if (!result.success) {
+      return next(
+        new AppError(400, "validation_error", "Path parameter validation failed", result.error.issues)
+      );
+    }
+    req.params = result.data as typeof req.params;
+    next();
+  };
+}

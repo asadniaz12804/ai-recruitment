@@ -7,6 +7,7 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { randomUUID } from "node:crypto";
 import { requireAuth, requireRole } from "../middleware/auth.js";
+import { writeLimiter } from "../middleware/rate-limit.js";
 import { resumeUpload } from "../middleware/upload.js";
 import { sendSuccess, AppError } from "../lib/errors.js";
 import { ALLOWED_RESUME_MIMES } from "../lib/cloudinary.js";
@@ -22,6 +23,7 @@ router.use(requireAuth, requireRole("candidate"));
 // --------------- POST /api/resumes/upload ---------------
 router.post(
   "/upload",
+  writeLimiter,
   // Multer handles multipart parsing; errors (size, type) are caught below
   (req: Request, res: Response, next: NextFunction) => {
     resumeUpload(req, res, (err: unknown) => {

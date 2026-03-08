@@ -3,6 +3,7 @@ import { Interview, type IInterview } from "../models/Interview.js";
 import { Offer, type IOffer } from "../models/Offer.js";
 import { Application } from "../models/Application.js";
 import { AppError } from "../lib/errors.js";
+import { audit } from "../lib/audit.js";
 import type {
   CreateInterviewInput,
   ListInterviewsQuery,
@@ -77,6 +78,14 @@ export async function createInterview(
     createdByUserId: new mongoose.Types.ObjectId(recruiterId),
   });
 
+  await audit({
+    actorUserId: recruiterId,
+    action: "interview.create",
+    entityType: "Interview",
+    entityId: interview._id.toString(),
+    metadata: { applicationId, mode: input.mode, scheduledAt: input.scheduledAt },
+  });
+
   return safeInterview(interview);
 }
 
@@ -138,6 +147,14 @@ export async function createOffer(
     message: input.message,
     status: "draft",
     createdByUserId: new mongoose.Types.ObjectId(recruiterId),
+  });
+
+  await audit({
+    actorUserId: recruiterId,
+    action: "offer.create",
+    entityType: "Offer",
+    entityId: offer._id.toString(),
+    metadata: { applicationId, currency: offer.currency },
   });
 
   return safeOffer(offer);
@@ -221,6 +238,13 @@ export async function updateOfferStatus(
       }
       offer.status = "sent";
       await offer.save();
+      await audit({
+        actorUserId: requestUser.id,
+        action: "offer.statusChange",
+        entityType: "Offer",
+        entityId: offerId,
+        metadata: { from: currentStatus, to: "sent" },
+      });
       return safeOffer(offer);
     }
 
@@ -235,6 +259,13 @@ export async function updateOfferStatus(
       }
       offer.status = "draft";
       await offer.save();
+      await audit({
+        actorUserId: requestUser.id,
+        action: "offer.statusChange",
+        entityType: "Offer",
+        entityId: offerId,
+        metadata: { from: currentStatus, to: "draft" },
+      });
       return safeOffer(offer);
     }
 
@@ -269,6 +300,13 @@ export async function updateOfferStatus(
 
     offer.status = newStatus;
     await offer.save();
+    await audit({
+      actorUserId: requestUser.id,
+      action: "offer.statusChange",
+      entityType: "Offer",
+      entityId: offerId,
+      metadata: { from: currentStatus, to: newStatus },
+    });
     return safeOffer(offer);
   }
 

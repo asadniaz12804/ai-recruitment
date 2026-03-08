@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { Job, type IJob } from "../models/Job.js";
 import { User } from "../models/User.js";
 import { AppError } from "../lib/errors.js";
+import { audit } from "../lib/audit.js";
 import type {
   CreateJobInput,
   UpdateJobInput,
@@ -65,6 +66,14 @@ export async function createJob(input: CreateJobInput, userId: string) {
     location: input.location || undefined,
     companyId: user.companyId,
     createdByUserId: new mongoose.Types.ObjectId(userId),
+  });
+
+  await audit({
+    actorUserId: userId,
+    action: "job.create",
+    entityType: "Job",
+    entityId: job._id.toString(),
+    metadata: { title: job.title, status: job.status },
   });
 
   return safeJob(job);
@@ -139,13 +148,34 @@ export async function updateJob(job: IJob, input: UpdateJobInput) {
   }
 
   await job.save();
+
+  await audit({
+    actorUserId: job.createdByUserId.toString(),
+    action: "job.update",
+    entityType: "Job",
+    entityId: job._id.toString(),
+    metadata: Object.fromEntries(
+      Object.entries(input).filter(([, v]) => v !== undefined)
+    ),
+  });
+
   return safeJob(job);
 }
 
 // --------------- Delete ---------------
 
-export async function deleteJob(jobId: string) {
+export async function deleteJob(jobId: string, actorUserId?: string) {
   await Job.findByIdAndDelete(jobId);
+
+  if (actorUserId) {
+    await audit({
+      actorUserId,
+      action: "job.delete",
+      entityType: "Job",
+      entityId: jobId,
+    });
+  }
+
   return { message: "Job deleted" };
 }
 

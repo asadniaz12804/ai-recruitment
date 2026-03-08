@@ -21,7 +21,8 @@ import {
   recruiterCanAccessJob,
   recruiterCanAccessApplication,
 } from "../middleware/application-access.js";
-import { validate, validateQuery } from "../middleware/validate.js";
+import { validate, validateQuery, validateParams } from "../middleware/validate.js";
+import { writeLimiter } from "../middleware/rate-limit.js";
 import {
   applyToJobSchema,
   updateApplicationStageSchema,
@@ -31,6 +32,7 @@ import {
   type CandidateApplicationsQuery,
   type RecruiterApplicationsQuery,
 } from "../lib/validation.applications.js";
+import { idParamSchema, jobIdParamSchema } from "../lib/validation.params.js";
 import { sendSuccess } from "../lib/errors.js";
 import * as applicationService from "../services/application.service.js";
 import type { IApplication } from "../models/Application.js";
@@ -46,6 +48,8 @@ candidateApplicationRouter.post(
   "/jobs/:id/apply",
   requireAuth,
   requireCandidate,
+  validateParams(idParamSchema),
+  writeLimiter,
   validate(applyToJobSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -86,6 +90,7 @@ candidateApplicationRouter.get(
 candidateApplicationRouter.get(
   "/applications/:id",
   requireAuth,
+  validateParams(idParamSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await applicationService.getApplicationById(
@@ -110,6 +115,7 @@ recruiterApplicationRouter.get(
   "/jobs/:jobId/applications",
   requireAuth,
   requireRecruiterCompany,
+  validateParams(jobIdParamSchema),
   recruiterCanAccessJob("jobId"),
   validateQuery(recruiterApplicationsQuerySchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -139,6 +145,7 @@ applicationMutationRouter.patch(
   "/applications/:id/stage",
   requireAuth,
   requireRecruiterCompany,
+  validateParams(idParamSchema),
   recruiterCanAccessApplication("id"),
   validate(updateApplicationStageSchema),
   async (req: Request, res: Response, next: NextFunction) => {
@@ -162,6 +169,7 @@ applicationMutationRouter.post(
   "/applications/:id/notes",
   requireAuth,
   requireRecruiterCompany,
+  validateParams(idParamSchema),
   recruiterCanAccessApplication("id"),
   validate(addApplicationNoteSchema),
   async (req: Request, res: Response, next: NextFunction) => {

@@ -1,8 +1,10 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { requireCompanyAccess } from "../middleware/company-access.js";
-import { validate } from "../middleware/validate.js";
+import { validate, validateParams } from "../middleware/validate.js";
+import { writeLimiter } from "../middleware/rate-limit.js";
 import { createCompanySchema } from "../lib/validation.phase2.js";
+import { idParamSchema } from "../lib/validation.params.js";
 import { sendSuccess } from "../lib/errors.js";
 import * as companyService from "../services/company.service.js";
 
@@ -14,6 +16,7 @@ router.post(
   "/",
   requireAuth,
   requireRole("admin", "recruiter"),
+  writeLimiter,
   validate(createCompanySchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -53,6 +56,7 @@ router.get(
   "/:id",
   requireAuth,
   requireRole("admin", "recruiter"),
+  validateParams(idParamSchema),
   requireCompanyAccess("id"),
   async (req: Request, res: Response, next: NextFunction) => {
     try {

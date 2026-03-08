@@ -1,4 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
+import { logger } from "../logger.js";
+
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 // --------------- Response Helpers ---------------
 export function sendSuccess<T>(res: Response, data: T, statusCode = 200) {
@@ -45,9 +48,13 @@ export function errorHandler(
     return;
   }
 
-  // Fallback
-  console.error("Unhandled error:", err);
+  // Fallback — never leak stack traces or internal details in production
+  logger.error(err, "Unhandled error");
   res.status(500).json({
-    error: { code: "internal_error", message: "Internal server error" },
+    error: {
+      code: "internal_error",
+      message: "Internal server error",
+      ...(IS_PRODUCTION ? {} : { debug: err.message }),
+    },
   });
 }
