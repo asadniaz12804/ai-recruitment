@@ -1,126 +1,169 @@
-/* src/theme/tokens.css */
+/* src/theme/tokens.css — Design System (Linear/Vercel style) */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Typography Scale (Inter/Roboto styled) */
+  /* Typography */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  
-  --text-xs: 0.75rem;    /* 12px */
-  --text-sm: 0.875rem;   /* 14px */
-  --text-base: 1rem;     /* 16px */
-  --text-lg: 1.125rem;   /* 18px */
-  --text-xl: 1.25rem;    /* 20px */
-  --text-2xl: 1.5rem;    /* 24px */
-  --text-3xl: 1.875rem;  /* 30px */
-  --text-4xl: 2.25rem;   /* 36px */
 
-  /* Font Weights */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+
   --font-regular: 400;
   --font-medium: 500;
   --font-semibold: 600;
   --font-bold: 700;
 
-  /* Spacing Scale */
-  --space-1: 0.25rem;  /* 4px */
-  --space-2: 0.5rem;   /* 8px */
-  --space-3: 0.75rem;  /* 12px */
-  --space-4: 1rem;     /* 16px */
-  --space-5: 1.25rem;  /* 20px */
-  --space-6: 1.5rem;   /* 24px */
-  --space-8: 2rem;     /* 32px */
-  --space-10: 2.5rem;  /* 40px */
-  --space-12: 3rem;    /* 48px */
-  --space-16: 4rem;    /* 64px */
+  /* Spacing */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
 
-  /* Borders & Radii (Minimal/Crisp) */
+  /* Radii */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
+  --radius-xl: 12px;
   --radius-full: 9999px;
-
   --border-width: 1px;
 
   /* Transitions */
   --transition-fast: 150ms ease;
-  --transition-normal: 300ms ease;
+  --transition-normal: 200ms ease;
 
-  /* =========================================
-     LIGHT MODE (Default)
-     ========================================= */
-  
-  /* Brand/Primary Colors */
-  --primary-500: #2563eb;
-  --primary-600: #1d4ed8;
-  --primary-700: #1e40af;
-  --primary-foreground: #ffffff;
+  /* ============ LIGHT MODE ============ */
 
-  /* Surfaces & Backgrounds */
-  --surface-base: #FDFCF8;        /* Body background — Softly warm white */
-  --surface-card: #ffffff;        /* Cards, modals */
-  --surface-hover: #f1f5f9;       /* Hover states */
-  --surface-active: #e2e8f0;      /* Active states */
-  
-  /* Text */
-  --text-primary: #0f172a;        /* High contrast headings/body */
-  --text-secondary: #475569;      /* Muted text, labels */
-  --text-tertiary: #64748b;       /* Placeholders, disabled text */
-  --text-on-primary: #ffffff;
-
-  /* Borders */
-  --border-subtle: #e2e8f0;       /* Card borders, dividers */
-  --border-strong: #cbd5e1;       /* Input borders */
-  --border-focus: var(--primary-500);
-
-  /* Status */
-  --success-bg: #dcfce7;
-  --success-text: #166534;
-  --warning-bg: #fef08a;
-  --warning-text: #854d0e;
-  --danger-bg: #fee2e2;
-  --danger-text: #b91c1c;
-
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-/* =========================================
-   DARK MODE
-   ========================================= */
-[data-theme='dark'] {
-  /* Brand/Primary Colors */
+  /* Primary (Blue) */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
   --primary-500: #3b82f6;
   --primary-600: #2563eb;
   --primary-700: #1d4ed8;
   --primary-foreground: #ffffff;
 
-  /* Surfaces (Layered Grays, NO pure black) */
-  --surface-base: #0f1115;        /* Deepest layer */
-  --surface-card: #1a1d24;        /* Elevated elements */
-  --surface-hover: #262a33;       /* Hover states */
-  --surface-active: #323845;      /* Active states */
+  /* Surfaces */
+  --surface-base: #ffffff;
+  --surface-card: #ffffff;
+  --surface-raised: #fafafa;
+  --surface-hover: #f5f5f5;
+  --surface-active: #ebebeb;
+  --surface-overlay: rgba(0, 0, 0, 0.5);
 
-  /* Text (Accessible contrast) */
-  --text-primary: #f8fafc;        /* Off-white, avoiding #fff for eye strain */
-  --text-secondary: #94a3b8;      /* Muted, readable */
-  --text-tertiary: #64748b;
+  /* Text */
+  --text-primary: #0a0a0a;
+  --text-secondary: #525252;
+  --text-tertiary: #a3a3a3;
   --text-on-primary: #ffffff;
 
-  /* Borders (Crisp but subtle) */
-  --border-subtle: #2d323e;       /* Card borders */
-  --border-strong: #3f4758;       /* Input borders */
+  /* Borders */
+  --border-subtle: #e5e5e5;
+  --border-strong: #d4d4d4;
   --border-focus: var(--primary-500);
 
   /* Status */
-  --success-bg: rgba(22, 101, 52, 0.3);
-  --success-text: #4ade80;
-  --warning-bg: rgba(133, 77, 14, 0.3);
-  --warning-text: #facc15;
-  --danger-bg: rgba(153, 27, 27, 0.3);
-  --danger-text: #f87171;
+  --success-bg: #dcfce7;
+  --success-text: #15803d;
+  --warning-bg: #fef9c3;
+  --warning-text: #a16207;
+  --danger-bg: #fee2e2;
+  --danger-text: #dc2626;
+  --info-bg: #dbeafe;
+  --info-text: #1d4ed8;
 
-  /* Shadows (Adjusted for dark mode elevation) */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+  /* Shadows (very subtle — Linear feel) */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+
+  /* Backward-compat aliases */
+  --bg-base: var(--surface-base);
+  --bg-surface: var(--surface-card);
+  --bg-muted: var(--surface-hover);
+  --color-primary: var(--primary-500);
+  --color-surface: var(--surface-base);
+  --color-card: var(--surface-card);
+  --color-text: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border-subtle);
+  --border-primary: var(--border-subtle);
+  --border-default: var(--border-subtle);
+  --surface-primary: var(--surface-card);
+  --brand-500: var(--primary-500);
+  --danger-600: var(--danger-text);
+  --success-600: var(--success-text);
+}
+
+/* ============ DARK MODE ============ */
+[data-theme='dark'] {
+  --primary-50: rgba(59, 130, 246, 0.1);
+  --primary-100: rgba(59, 130, 246, 0.15);
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-foreground: #ffffff;
+
+  --surface-base: #0a0a0a;
+  --surface-card: #141414;
+  --surface-raised: #1a1a1a;
+  --surface-hover: #1f1f1f;
+  --surface-active: #2a2a2a;
+  --surface-overlay: rgba(0, 0, 0, 0.7);
+
+  --text-primary: #fafafa;
+  --text-secondary: #a3a3a3;
+  --text-tertiary: #525252;
+  --text-on-primary: #ffffff;
+
+  --border-subtle: #262626;
+  --border-strong: #404040;
+  --border-focus: var(--primary-500);
+
+  --success-bg: rgba(22, 163, 74, 0.15);
+  --success-text: #4ade80;
+  --warning-bg: rgba(202, 138, 4, 0.15);
+  --warning-text: #facc15;
+  --danger-bg: rgba(220, 38, 38, 0.15);
+  --danger-text: #f87171;
+  --info-bg: rgba(59, 130, 246, 0.15);
+  --info-text: #60a5fa;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+
+  /* Backward-compat aliases */
+  --bg-base: var(--surface-base);
+  --bg-surface: var(--surface-card);
+  --bg-muted: var(--surface-hover);
+  --color-primary: var(--primary-500);
+  --color-surface: var(--surface-base);
+  --color-card: var(--surface-card);
+  --color-text: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border-subtle);
+  --border-primary: var(--border-subtle);
+  --border-default: var(--border-subtle);
+  --surface-primary: var(--surface-card);
+  --brand-500: var(--primary-500);
+  --danger-600: var(--danger-text);
+  --success-600: var(--success-text);
 }

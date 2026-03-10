@@ -7,6 +7,7 @@ export interface AuthUser {
   name: string | null;
   avatarUrl: string | null;
   companyId?: string | null;
+  companyName?: string | null;
   createdAt: string;
 }
 
@@ -15,10 +16,27 @@ interface AuthResponse {
   accessToken: string;
 }
 
+/** Returns the role-based home path for a user. */
+export function getHomePath(user: AuthUser): string {
+  switch (user.role) {
+    case "admin":
+      return "/admin/users";
+    case "recruiter":
+      if (user.companyName) {
+        return `/ai-recruitment/${encodeURIComponent(user.companyName)}`;
+      }
+      return "/company/new";
+    case "candidate":
+    default:
+      return "/jobs";
+  }
+}
+
 export async function registerUser(data: {
   email: string;
   password: string;
   name?: string;
+  role?: "candidate" | "recruiter";
 }): Promise<AuthUser> {
   const result = await api<AuthResponse>("/api/auth/register", {
     method: "POST",

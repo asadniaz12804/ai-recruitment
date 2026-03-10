@@ -1,8 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { MapPin, Briefcase, Wifi } from "lucide-react";
+import { MapPin, Briefcase, Wifi, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { listPublicJobs, type Job, type PaginatedResponse } from "../lib/jobs";
-import { ThemeToggle } from "../components/shared/ThemeToggle";
 import styles from "./JobBoardPage.module.css";
 
 export function JobBoardPage() {
@@ -40,7 +39,6 @@ export function JobBoardPage() {
     fetchJobs();
   }, [fetchJobs]);
 
-  // Debounced search on q/location change
   useEffect(() => {
     setPage(1);
   }, [q, location, employmentType, remote]);
@@ -58,48 +56,36 @@ export function JobBoardPage() {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <header className={styles.navbar}>
-        <div className={styles.navInner}>
-          <span className={styles.navBrand}>AI Recruit — Job Board</span>
-          <div className={styles.navActions}>
-            <ThemeToggle />
-            <Link to="/login" className={styles.navLink}>
-              Sign In
-            </Link>
-            <Link to="/ai-recruitment" className={styles.navLink}>
-              Home
-            </Link>
-          </div>
-        </div>
-      </header>
+    <div className={styles.container}>
+      {/* Page header */}
+      <div className={styles.header}>
+        <h1 className={styles.title}>Open Positions</h1>
+        <p className={styles.subtitle}>
+          Find your next opportunity. {data && `${data.pagination.total} jobs available.`}
+        </p>
+      </div>
 
-      <main className={styles.main}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>Open Positions</h1>
-          <p className={styles.subtitle}>
-            Browse and search available job openings.
-          </p>
-        </div>
+      {error && <div className={styles.errorMsg}>{error}</div>}
 
-        {error && <div className={styles.errorMsg}>{error}</div>}
-
-        {/* Filters */}
-        <div className={styles.filters}>
+      {/* Filters */}
+      <div className={styles.filters}>
+        <div className={styles.searchBox}>
+          <Search size={16} className={styles.searchIcon} />
           <input
             className={styles.searchInput}
             type="text"
-            placeholder="Search jobs…"
+            placeholder="Search by title, skill, or keyword…"
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
+        </div>
+        <div className={styles.filterRow}>
           <input
-            className={styles.searchInput}
+            className={styles.filterInput}
             type="text"
             placeholder="Location…"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            style={{ maxWidth: 180 }}
           />
           <select
             className={styles.filterSelect}
@@ -118,84 +104,94 @@ export function JobBoardPage() {
             value={remote}
             onChange={(e) => setRemote(e.target.value)}
           >
-            <option value="">Remote?</option>
-            <option value="true">Remote only</option>
-            <option value="false">On-site only</option>
+            <option value="">All Locations</option>
+            <option value="true">Remote</option>
+            <option value="false">On-site</option>
           </select>
         </div>
+      </div>
 
-        {loading ? (
-          <div className={styles.loading}>Loading jobs…</div>
-        ) : !data || data.items.length === 0 ? (
-          <div className={styles.emptyState}>No open positions found.</div>
-        ) : (
-          <>
-            <div className={styles.jobGrid}>
-              {data.items.map((job) => (
-                <Link
-                  key={job.id}
-                  to={`/jobs/${job.id}`}
-                  className={styles.jobCard}
-                >
+      {loading ? (
+        <div className={styles.loading}>
+          <div className={styles.skeleton} />
+          <div className={styles.skeleton} />
+          <div className={styles.skeleton} />
+        </div>
+      ) : !data || data.items.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p className={styles.emptyTitle}>No positions found</p>
+          <p className={styles.emptySubtitle}>Try adjusting your filters or search terms.</p>
+        </div>
+      ) : (
+        <>
+          <div className={styles.jobList}>
+            {data.items.map((job) => (
+              <Link
+                key={job.id}
+                to={`/jobs/${job.id}`}
+                className={styles.jobCard}
+              >
+                <div className={styles.jobCardMain}>
                   <h3 className={styles.jobCardTitle}>{job.title}</h3>
                   <div className={styles.jobCardMeta}>
-                    <span className={styles.metaItem}>
-                      <Briefcase size={14} /> {job.employmentType}
+                    <span className={styles.metaChip}>
+                      <Briefcase size={13} /> {job.employmentType}
                     </span>
                     {job.location && (
-                      <span className={styles.metaItem}>
-                        <MapPin size={14} /> {job.location}
+                      <span className={styles.metaChip}>
+                        <MapPin size={13} /> {job.location}
                       </span>
                     )}
                     {job.remote && (
-                      <span className={styles.metaItem}>
-                        <Wifi size={14} /> Remote
+                      <span className={`${styles.metaChip} ${styles.remoteChip}`}>
+                        <Wifi size={13} /> Remote
                       </span>
                     )}
                     {job.seniority && (
-                      <span className={styles.metaItem}>
-                        {job.seniority}
-                      </span>
+                      <span className={styles.metaChip}>{job.seniority}</span>
                     )}
                   </div>
                   {job.skillsRequired.length > 0 && (
-                    <div className={styles.jobCardSkills}>
-                      {job.skillsRequired.slice(0, 6).map((s) => (
-                        <span key={s} className={styles.skillTag}>
-                          {s}
-                        </span>
+                    <div className={styles.skillRow}>
+                      {job.skillsRequired.slice(0, 5).map((s) => (
+                        <span key={s} className={styles.skillTag}>{s}</span>
                       ))}
+                      {job.skillsRequired.length > 5 && (
+                        <span className={styles.skillMore}>+{job.skillsRequired.length - 5}</span>
+                      )}
                     </div>
                   )}
-                  {formatSalary(job) && (
-                    <div className={styles.salaryInfo}>{formatSalary(job)}</div>
-                  )}
-                </Link>
-              ))}
-            </div>
+                </div>
+                {formatSalary(job) && (
+                  <div className={styles.salaryBadge}>{formatSalary(job)}</div>
+                )}
+              </Link>
+            ))}
+          </div>
 
+          {data.pagination.totalPages > 1 && (
             <div className={styles.pagination}>
               <button
                 className={styles.pageBtn}
                 disabled={page <= 1}
                 onClick={() => setPage((p) => p - 1)}
               >
-                Previous
+                <ChevronLeft size={14} /> Previous
               </button>
               <span className={styles.pageInfo}>
-                Page {data.pagination.page} of {data.pagination.totalPages}
+                {data.pagination.page} / {data.pagination.totalPages}
               </span>
               <button
                 className={styles.pageBtn}
                 disabled={page >= data.pagination.totalPages}
                 onClick={() => setPage((p) => p + 1)}
               >
-                Next
+                Next <ChevronRight size={14} />
               </button>
             </div>
-          </>
-        )}
-      </main>
+          )}
+        </>
+      )}
     </div>
   );
 }

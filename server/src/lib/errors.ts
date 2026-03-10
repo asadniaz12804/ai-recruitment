@@ -48,6 +48,23 @@ export function errorHandler(
     return;
   }
 
+  // MongoDB duplicate-key errors (E11000)
+  if (
+    err.name === "MongoServerError" &&
+    (err as unknown as { code?: number }).code === 11000
+  ) {
+    const keyPattern = (err as unknown as { keyPattern?: Record<string, unknown> })
+      .keyPattern;
+    const field = keyPattern ? Object.keys(keyPattern)[0] : "unknown";
+    res.status(409).json({
+      error: {
+        code: "duplicate",
+        message: `A record with that ${field} already exists`,
+      },
+    });
+    return;
+  }
+
   // Fallback — never leak stack traces or internal details in production
   logger.error(err, "Unhandled error");
   res.status(500).json({

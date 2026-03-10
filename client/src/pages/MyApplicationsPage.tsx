@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ChevronDown, ChevronUp, Calendar, Video, MapPin, DollarSign, CheckCircle, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   listMyApplications,
   candidateListInterviews,
@@ -10,7 +11,6 @@ import {
   type InterviewRecord,
   type OfferRecord,
 } from "../lib/applications";
-import { ThemeToggle } from "../components/shared/ThemeToggle";
 import styles from "./MyApplicationsPage.module.css";
 
 function stageBadgeClass(stage: string): string {
@@ -57,7 +57,6 @@ function AppCard({ app }: { app: CandidateApplication }) {
     setResponding(true);
     try {
       await candidateRespondToOffer(offerId, decision);
-      // reload offers
       const ofRes = await candidateListOffers(app.id, { limit: 50 });
       setOffers(ofRes.items);
     } catch {
@@ -69,7 +68,7 @@ function AppCard({ app }: { app: CandidateApplication }) {
 
   return (
     <div className={`${styles.appCard} ${expanded ? styles.appCardExpanded : ""}`}>
-      <div className={styles.appCardTopRow} onClick={handleToggle}>
+      <button className={styles.appCardHeader} onClick={handleToggle} type="button">
         <div className={styles.appInfo}>
           <div className={styles.appJobTitle}>
             {app.job ? (
@@ -82,25 +81,27 @@ function AppCard({ app }: { app: CandidateApplication }) {
           </div>
           <div className={styles.appMeta}>
             {app.job?.companyName && <span>{app.job.companyName}</span>}
-            {app.job?.location && <span>• {app.job.location}</span>}
-            {app.job?.employmentType && <span>• {app.job.employmentType}</span>}
+            {app.job?.location && <span className={styles.metaDot}>·</span>}
+            {app.job?.location && <span>{app.job.location}</span>}
+            {app.job?.employmentType && <span className={styles.metaDot}>·</span>}
+            {app.job?.employmentType && <span>{app.job.employmentType}</span>}
           </div>
           <div className={styles.appDate}>
-            Applied {new Date(app.createdAt).toLocaleDateString()}
-          </div>
-          <div className={styles.expandHint}>
-            {expanded ? "▲ Collapse" : "▼ View details"}
+            <Calendar size={12} /> Applied {new Date(app.createdAt).toLocaleDateString()}
           </div>
         </div>
-        <span className={stageBadgeClass(app.stage)}>{app.stage}</span>
-      </div>
+        <div className={styles.appRight}>
+          <span className={stageBadgeClass(app.stage)}>{app.stage}</span>
+          {expanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </div>
+      </button>
 
       {expanded && (
-        <>
-          {/* Interviews read-only */}
+        <div className={styles.appDetails}>
+          {/* Interviews */}
           <div className={styles.detailSection}>
             <div className={styles.detailSectionTitle}>
-              Interviews ({interviews.length})
+              <Video size={14} /> Interviews ({interviews.length})
             </div>
             {interviews.length === 0 && (
               <div className={styles.emptyDetail}>No interviews scheduled yet.</div>
@@ -108,44 +109,49 @@ function AppCard({ app }: { app: CandidateApplication }) {
             {interviews.map((iv) => (
               <div key={iv.id} className={styles.detailItem}>
                 <strong>{iv.mode}</strong> — {new Date(iv.scheduledAt).toLocaleString()}
-                {iv.locationOrLink && <span> · {iv.locationOrLink}</span>}
+                {iv.locationOrLink && (
+                  <span className={styles.detailMeta}>
+                    <MapPin size={12} /> {iv.locationOrLink}
+                  </span>
+                )}
                 {iv.notes && <div className={styles.detailMeta}>{iv.notes}</div>}
               </div>
             ))}
           </div>
 
-          {/* Offers with accept / decline */}
+          {/* Offers */}
           <div className={styles.detailSection}>
             <div className={styles.detailSectionTitle}>
-              Offers ({offers.length})
+              <DollarSign size={14} /> Offers ({offers.length})
             </div>
             {offers.length === 0 && (
               <div className={styles.emptyDetail}>No offers yet.</div>
             )}
             {offers.map((o) => (
               <div key={o.id} className={styles.detailItem}>
-                <span
-                  className={`${styles.statusBadge} ${
-                    o.status === "draft"
-                      ? styles.statusDraft
-                      : o.status === "sent"
-                      ? styles.statusSent
-                      : o.status === "accepted"
-                      ? styles.statusAccepted
-                      : styles.statusDeclined
-                  }`}
-                >
-                  {o.status}
-                </span>
-                {(o.salaryMin != null || o.salaryMax != null) && (
-                  <span>
-                    {" — "}
-                    {o.salaryMin != null && `${o.currency} ${o.salaryMin.toLocaleString()}`}
-                    {o.salaryMin != null && o.salaryMax != null && " – "}
-                    {o.salaryMax != null &&
-                      `${o.salaryMin == null ? `${o.currency} ` : ""}${o.salaryMax.toLocaleString()}`}
+                <div className={styles.offerHeader}>
+                  <span
+                    className={`${styles.statusBadge} ${
+                      o.status === "draft"
+                        ? styles.statusDraft
+                        : o.status === "sent"
+                        ? styles.statusSent
+                        : o.status === "accepted"
+                        ? styles.statusAccepted
+                        : styles.statusDeclined
+                    }`}
+                  >
+                    {o.status}
                   </span>
-                )}
+                  {(o.salaryMin != null || o.salaryMax != null) && (
+                    <span className={styles.offerSalary}>
+                      {o.salaryMin != null && `${o.currency} ${o.salaryMin.toLocaleString()}`}
+                      {o.salaryMin != null && o.salaryMax != null && " – "}
+                      {o.salaryMax != null &&
+                        `${o.salaryMin == null ? `${o.currency} ` : ""}${o.salaryMax.toLocaleString()}`}
+                    </span>
+                  )}
+                </div>
                 {o.message && <div className={styles.detailMeta}>{o.message}</div>}
                 <div className={styles.detailMeta}>
                   {new Date(o.createdAt).toLocaleString()}
@@ -157,21 +163,21 @@ function AppCard({ app }: { app: CandidateApplication }) {
                       disabled={responding}
                       onClick={() => handleOfferRespond(o.id, "accepted")}
                     >
-                      Accept
+                      <CheckCircle size={14} /> Accept
                     </button>
                     <button
                       className={styles.btnDecline}
                       disabled={responding}
                       onClick={() => handleOfferRespond(o.id, "declined")}
                     >
-                      Decline
+                      <XCircle size={14} /> Decline
                     </button>
                   </div>
                 )}
               </div>
             ))}
           </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -194,67 +200,64 @@ export function MyApplicationsPage() {
   }, [page]);
 
   return (
-    <div className={styles.wrapper}>
-      <header className={styles.navbar}>
-        <div className={styles.navInner}>
-          <Link to="/jobs" className={styles.navBrand}>
-            AI Recruit
-          </Link>
-          <div className={styles.navActions}>
-            <Link to="/candidate/profile" className={styles.navLink}>Profile</Link>
-            <Link to="/jobs" className={styles.navLink}>Job Board</Link>
-            <ThemeToggle />
-          </div>
-        </div>
+    <div className={styles.container}>
+      <header className={styles.pageHeader}>
+        <h1 className={styles.title}>My Applications</h1>
+        <p className={styles.subtitle}>Track your job applications and interview progress.</p>
       </header>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>My Applications</h1>
+      {loading && (
+        <div className={styles.skeletonList}>
+          {[1, 2, 3].map((i) => (
+            <div key={i} className={styles.skeleton} style={{ height: 80 }} />
+          ))}
+        </div>
+      )}
+      {error && <div className={styles.errorMsg}>{error}</div>}
 
-        {loading && <div className={styles.loading}>Loading…</div>}
-        {error && <div className={styles.errorMsg}>{error}</div>}
+      {data && data.items.length === 0 && (
+        <div className={styles.emptyState}>
+          <p className={styles.emptyTitle}>No applications yet</p>
+          <p className={styles.emptyText}>
+            Start browsing open positions and apply to get started.
+          </p>
+          <Link to="/jobs" className={styles.emptyLink}>
+            Browse Jobs
+          </Link>
+        </div>
+      )}
 
-        {data && data.items.length === 0 && (
-          <div className={styles.emptyState}>
-            <p>You haven't applied to any jobs yet.</p>
-            <p>
-              <Link to="/jobs">Browse open positions</Link>
-            </p>
+      {data && data.items.length > 0 && (
+        <>
+          <div className={styles.appList}>
+            {data.items.map((app) => (
+              <AppCard key={app.id} app={app} />
+            ))}
           </div>
-        )}
 
-        {data && data.items.length > 0 && (
-          <>
-            <div className={styles.appList}>
-              {data.items.map((app) => (
-                <AppCard key={app.id} app={app} />
-              ))}
+          {data.pagination.totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                className={styles.pageBtn}
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                <ChevronLeft size={16} /> Previous
+              </button>
+              <span className={styles.pageInfo}>
+                {data.pagination.page} / {data.pagination.totalPages}
+              </span>
+              <button
+                className={styles.pageBtn}
+                disabled={page >= data.pagination.totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                Next <ChevronRight size={16} />
+              </button>
             </div>
-
-            {data.pagination.totalPages > 1 && (
-              <div className={styles.pagination}>
-                <button
-                  className={styles.pageBtn}
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => p - 1)}
-                >
-                  Previous
-                </button>
-                <span className={styles.pageInfo}>
-                  Page {data.pagination.page} of {data.pagination.totalPages}
-                </span>
-                <button
-                  className={styles.pageBtn}
-                  disabled={page >= data.pagination.totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  Next
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </main>
+          )}
+        </>
+      )}
     </div>
   );
 }

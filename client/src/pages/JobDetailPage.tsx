@@ -5,7 +5,6 @@ import { getJob, type Job } from "../lib/jobs";
 import { listMyResumes, type ResumeRecord } from "../lib/candidate";
 import { applyToJob } from "../lib/applications";
 import { useAuth } from "../context/AuthContext";
-import { ThemeToggle } from "../components/shared/ThemeToggle";
 import styles from "./JobDetailPage.module.css";
 
 export function JobDetailPage() {
@@ -86,144 +85,126 @@ export function JobDetailPage() {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <header className={styles.navbar}>
-        <div className={styles.navInner}>
-          <Link to="/jobs" className={styles.navBrand}>
-            AI Recruit — Job Board
-          </Link>
-          <div className={styles.navActions}>
-            <ThemeToggle />
-            <Link to="/login" className={styles.navLink}>
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <main className={styles.main}>
+    <div className={styles.container}>
         <Link to="/jobs" className={styles.backLink}>
           <ArrowLeft size={14} /> Back to jobs
         </Link>
 
-        {loading && <div className={styles.loading}>Loading…</div>}
+        {loading && (
+          <div className={styles.loading}>
+            <div className={styles.skeleton} style={{ height: 32, width: '60%' }} />
+            <div className={styles.skeleton} style={{ height: 16, width: '40%' }} />
+            <div className={styles.skeleton} style={{ height: 200 }} />
+          </div>
+        )}
         {error && <div className={styles.errorMsg}>{error}</div>}
 
         {job && (
-          <>
-            <h1 className={styles.jobTitle}>{job.title}</h1>
+          <div className={styles.layout}>
+            <div className={styles.mainCol}>
+              <h1 className={styles.jobTitle}>{job.title}</h1>
 
-            <div className={styles.metaRow}>
-              <span className={styles.metaItem}>
-                <Briefcase size={15} /> {job.employmentType}
-              </span>
-              {job.location && (
-                <span className={styles.metaItem}>
-                  <MapPin size={15} /> {job.location}
+              <div className={styles.metaRow}>
+                <span className={styles.metaChip}>
+                  <Briefcase size={14} /> {job.employmentType}
                 </span>
-              )}
-              {job.remote && (
-                <span className={styles.metaItem}>
-                  <Wifi size={15} /> Remote
-                </span>
-              )}
-              {job.seniority && (
-                <span className={styles.metaItem}>
-                  <Clock size={15} /> {job.seniority}
-                </span>
-              )}
-              <span className={statusClass(job.status)}>{job.status}</span>
-            </div>
-
-            {formatSalary(job) && (
-              <div className={styles.salaryBlock}>
-                <div className={styles.salaryLabel}>Salary Range</div>
-                <div className={styles.salaryValue}>{formatSalary(job)}</div>
+                {job.location && (
+                  <span className={styles.metaChip}>
+                    <MapPin size={14} /> {job.location}
+                  </span>
+                )}
+                {job.remote && (
+                  <span className={`${styles.metaChip} ${styles.remoteChip}`}>
+                    <Wifi size={14} /> Remote
+                  </span>
+                )}
+                {job.seniority && (
+                  <span className={styles.metaChip}>
+                    <Clock size={14} /> {job.seniority}
+                  </span>
+                )}
+                <span className={statusClass(job.status)}>{job.status}</span>
               </div>
-            )}
 
-            <div className={styles.section}>
-              <h2 className={styles.sectionTitle}>Description</h2>
-              <div className={styles.description}>{job.description}</div>
-            </div>
+              {formatSalary(job) && (
+                <div className={styles.salaryBadge}>{formatSalary(job)}</div>
+              )}
 
-            {job.skillsRequired.length > 0 && (
               <div className={styles.section}>
-                <h2 className={styles.sectionTitle}>Required Skills</h2>
-                <div className={styles.skillList}>
-                  {job.skillsRequired.map((s) => (
-                    <span key={s} className={styles.skillTag}>
-                      {s}
-                    </span>
-                  ))}
-                </div>
+                <h2 className={styles.sectionTitle}>Description</h2>
+                <div className={styles.description}>{job.description}</div>
               </div>
-            )}
 
-            <div className={styles.applySection}>
-              {!user && (
-                <>
-                  <Link to="/login" className={styles.applyBtn} style={{ textDecoration: "none", display: "inline-block", textAlign: "center", opacity: 1, cursor: "pointer" }}>
-                    Sign In to Apply
-                  </Link>
-                  <p className={styles.applyNote}>
-                    You must be logged in as a candidate to apply.
-                  </p>
-                </>
-              )}
-              {user && user.role !== "candidate" && (
-                <p className={styles.applyNote}>
-                  Only candidates can apply to jobs.
-                </p>
-              )}
-              {user && user.role === "candidate" && applied && (
-                <div className={styles.appliedState}>
-                  <CheckCircle size={20} />
-                  <span>You have applied to this job</span>
+              {job.skillsRequired.length > 0 && (
+                <div className={styles.section}>
+                  <h2 className={styles.sectionTitle}>Required Skills</h2>
+                  <div className={styles.skillList}>
+                    {job.skillsRequired.map((s) => (
+                      <span key={s} className={styles.skillTag}>{s}</span>
+                    ))}
+                  </div>
                 </div>
-              )}
-              {user && user.role === "candidate" && !applied && job.status === "open" && (
-                <>
-                  {resumes.length > 0 && (
-                    <div className={styles.resumeSelect}>
-                      <label htmlFor="resume-select">Attach resume (optional):</label>
-                      <select
-                        id="resume-select"
-                        value={selectedResumeId}
-                        onChange={(e) => setSelectedResumeId(e.target.value)}
-                        className={styles.resumeDropdown}
-                      >
-                        <option value="">No resume</option>
-                        {resumes.map((r) => (
-                          <option key={r.id} value={r.id}>
-                            {r.originalFileName}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                  <button
-                    className={styles.applyBtn}
-                    onClick={handleApply}
-                    disabled={applying}
-                    style={{ opacity: 1, cursor: applying ? "wait" : "pointer" }}
-                  >
-                    {applying ? "Applying…" : "Apply Now"}
-                  </button>
-                  {applyError && (
-                    <p className={styles.applyError}>{applyError}</p>
-                  )}
-                </>
-              )}
-              {user && user.role === "candidate" && !applied && job.status !== "open" && (
-                <p className={styles.applyNote}>
-                  This job is not currently accepting applications.
-                </p>
               )}
             </div>
-          </>
+
+            <aside className={styles.sidebar}>
+              <div className={styles.applyCard}>
+                <h3 className={styles.applyCardTitle}>Apply to this position</h3>
+
+                {!user && (
+                  <>
+                    <Link to="/login" className={styles.applyBtn}>Sign In to Apply</Link>
+                    <p className={styles.applyNote}>You must be logged in as a candidate to apply.</p>
+                  </>
+                )}
+
+                {user && user.role !== "candidate" && (
+                  <p className={styles.applyNote}>Only candidates can apply to jobs.</p>
+                )}
+
+                {user && user.role === "candidate" && applied && (
+                  <div className={styles.appliedState}>
+                    <CheckCircle size={18} />
+                    <span>You have applied</span>
+                  </div>
+                )}
+
+                {user && user.role === "candidate" && !applied && job.status === "open" && (
+                  <>
+                    {resumes.length > 0 && (
+                      <div className={styles.resumeSelect}>
+                        <label htmlFor="resume-select" className={styles.resumeLabel}>Attach resume</label>
+                        <select
+                          id="resume-select"
+                          value={selectedResumeId}
+                          onChange={(e) => setSelectedResumeId(e.target.value)}
+                          className={styles.resumeDropdown}
+                        >
+                          <option value="">No resume</option>
+                          {resumes.map((r) => (
+                            <option key={r.id} value={r.id}>{r.originalFileName}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                    <button
+                      className={styles.applyBtn}
+                      onClick={handleApply}
+                      disabled={applying}
+                    >
+                      {applying ? "Applying…" : "Apply Now"}
+                    </button>
+                    {applyError && <p className={styles.applyError}>{applyError}</p>}
+                  </>
+                )}
+
+                {user && user.role === "candidate" && !applied && job.status !== "open" && (
+                  <p className={styles.applyNote}>This job is not currently accepting applications.</p>
+                )}
+              </div>
+            </aside>
+          </div>
         )}
-      </main>
     </div>
   );
 }

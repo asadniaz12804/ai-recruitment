@@ -20,7 +20,6 @@ import {
   type OfferStatus,
 } from "../lib/applications";
 import { getJob, type Job } from "../lib/jobs";
-import { ThemeToggle } from "../components/shared/ThemeToggle";
 import styles from "./RecruiterApplicantsPage.module.css";
 
 function stageBadgeClass(stage: string): string {
@@ -411,23 +410,12 @@ export function RecruiterApplicantsPage() {
   }
 
   return (
-    <div className={styles.wrapper}>
-      <header className={styles.navbar}>
-        <div className={styles.navInner}>
-          <Link to="/jobs" className={styles.navBrand}>
-            AI Recruit — Recruiter
-          </Link>
-          <div className={styles.navActions}>
-            <ThemeToggle />
-          </div>
-        </div>
-      </header>
+    <div className={styles.container}>
+      <Link to="/jobs" className={styles.backLink}>
+        <ArrowLeft size={14} /> Back to Jobs
+      </Link>
 
-      <main className={styles.main}>
-        <Link to="/jobs" className={styles.backLink}>
-          <ArrowLeft size={14} /> Back
-        </Link>
-
+      <header className={styles.pageHeader}>
         <h1 className={styles.title}>
           Applicants{job ? ` — ${job.title}` : ""}
         </h1>
@@ -436,6 +424,7 @@ export function RecruiterApplicantsPage() {
             {job.location ?? "Remote"} · {job.employmentType}
           </p>
         )}
+      </header>
 
         {/* Stage filter buttons */}
         <div className={styles.filters}>
@@ -610,7 +599,6 @@ export function RecruiterApplicantsPage() {
             )}
           </>
         )}
-      </main>
     </div>
   );
 }

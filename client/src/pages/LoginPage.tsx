@@ -1,24 +1,33 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getHomePath } from "../lib/auth";
 import { ApiError } from "../lib/api";
 import styles from "./AuthPage.module.css";
 
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // If already logged in, redirect
+  if (user) {
+    const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
+    navigate(from || getHomePath(user), { replace: true });
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
     try {
-      await login(email, password);
-      navigate("/ai-recruitment");
+      const loggedInUser = await login(email, password);
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
+      navigate(from || getHomePath(loggedInUser), { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {
         setError(err.message);

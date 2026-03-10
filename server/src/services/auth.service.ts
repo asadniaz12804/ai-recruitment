@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import argon2 from "argon2";
 import type { Response } from "express";
 import { User, type IUser } from "../models/User.js";
+import { Company } from "../models/Company.js";
 import { RefreshToken } from "../models/RefreshToken.js";
 import {
   signAccessToken,
@@ -13,7 +14,12 @@ import type { RegisterInput, LoginInput } from "../lib/validation.js";
 
 // --------------- Helpers ---------------
 
-function safeUser(user: IUser) {
+async function safeUser(user: IUser) {
+  let companyName: string | null = null;
+  if (user.companyId) {
+    const company = await Company.findById(user.companyId).select("name").lean();
+    companyName = company?.name ?? null;
+  }
   return {
     id: user._id.toString(),
     email: user.email,
@@ -21,18 +27,26 @@ function safeUser(user: IUser) {
     name: user.name ?? null,
     avatarUrl: user.avatarUrl ?? null,
     companyId: user.companyId?.toString() ?? null,
+    companyName,
     createdAt: user.createdAt.toISOString(),
   };
 }
 
 function setRefreshCookie(res: Response, token: string) {
   const isProduction = process.env.NODE_ENV === "production";
+  const secure = isProduction || process.env.COOKIE_SECURE === "true";
+  // When frontend & backend are on different domains, sameSite must be "none"
+  // (requires secure=true). Use COOKIE_SAMESITE env to override.
+  const sameSiteEnv = process.env.COOKIE_SAMESITE as "strict" | "lax" | "none" | undefined;
+  const sameSite = sameSiteEnv ?? (isProduction ? "none" : "lax");
+  const domain = process.env.COOKIE_DOMAIN || undefined;
   res.cookie("refreshToken", token, {
     httpOnly: true,
-    secure: isProduction || process.env.COOKIE_SECURE === "true",
-    sameSite: isProduction ? "strict" : "lax",
+    secure: sameSite === "none" ? true : secure,
+    sameSite,
     path: "/api/auth",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    ...(domain ? { domain } : {}),
   });
 }
 
@@ -64,7 +78,7 @@ export async function register(input: RegisterInput, res: Response) {
     email: input.email,
     passwordHash,
     name: input.name,
-    role: "candidate",
+    role: input.role ?? "candidate",
   });
 
   const accessToken = signAccessToken({
@@ -75,7 +89,7 @@ export async function register(input: RegisterInput, res: Response) {
 
   setRefreshCookie(res, refreshToken);
 
-  return { user: safeUser(user), accessToken };
+  return { user: await safeUser(user), accessToken };
 }
 
 export async function login(input: LoginInput, res: Response) {
@@ -97,7 +111,7 @@ export async function login(input: LoginInput, res: Response) {
 
   setRefreshCookie(res, refreshToken);
 
-  return { user: safeUser(user), accessToken };
+  return { user: await safeUser(user), accessToken };
 }
 
 export async function refresh(cookieToken: string | undefined, res: Response) {
@@ -151,7 +165,7 @@ export async function refresh(cookieToken: string | undefined, res: Response) {
 
   setRefreshCookie(res, newRefreshToken);
 
-  return { user: safeUser(user), accessToken };
+  return { user: await safeUser(user), accessToken };
 }
 
 export async function logout(cookieToken: string | undefined, res: Response) {

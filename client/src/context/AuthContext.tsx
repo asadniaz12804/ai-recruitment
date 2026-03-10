@@ -18,8 +18,8 @@ import { getAccessToken } from "../lib/api";
 interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name?: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<AuthUser>;
+  register: (email: string, password: string, name?: string, role?: "candidate" | "recruiter") => Promise<AuthUser>;
   logout: () => Promise<void>;
 }
 
@@ -53,12 +53,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, password: string) => {
     const u = await loginUser({ email, password });
     setUser(u);
+    return u;
   }, []);
 
   const register = useCallback(
-    async (email: string, password: string, name?: string) => {
-      const u = await registerUser({ email, password, name });
+    async (email: string, password: string, name?: string, role?: "candidate" | "recruiter") => {
+      const u = await registerUser({ email, password, name, role });
       setUser(u);
+      return u;
     },
     []
   );

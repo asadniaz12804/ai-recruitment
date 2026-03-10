@@ -1,7 +1,8 @@
 .container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
   max-width: 800px;
-  margin: 0 auto;
-  padding: var(--space-6) var(--space-4);
 }
 
 .header {
@@ -61,19 +62,20 @@
   width: 100%;
   min-height: 100px;
   padding: var(--space-3);
-  border: var(--border-width) solid var(--border-default);
+  border: var(--border-width) solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--surface-primary);
+  background: var(--surface-card);
   color: var(--text-primary);
   font-family: inherit;
   font-size: var(--text-sm);
   resize: vertical;
+  transition: border-color var(--transition-fast);
 }
 
 .textarea:focus {
   outline: none;
-  border-color: var(--brand-500);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-500) 25%, transparent);
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-500) 25%, transparent);
 }
 
 .footer {
@@ -85,13 +87,19 @@
 
 .successMsg {
   font-size: var(--text-sm);
-  color: var(--success-600, #059669);
+  color: var(--success-text);
+  padding: var(--space-2) var(--space-3);
+  background: var(--success-bg);
+  border-radius: var(--radius-md);
   margin-bottom: var(--space-3);
 }
 
 .errorMsg {
   font-size: var(--text-sm);
-  color: var(--danger-600, #dc2626);
+  color: var(--danger-text);
+  padding: var(--space-2) var(--space-3);
+  background: var(--danger-bg);
+  border-radius: var(--radius-md);
   margin-bottom: var(--space-3);
 }
 
@@ -100,11 +108,16 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-4);
-  border: 2px dashed var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--surface-secondary, var(--surface-primary));
+  padding: var(--space-5);
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-hover);
   margin-bottom: var(--space-4);
+  transition: border-color var(--transition-fast);
+}
+
+.resumeUploadArea:hover {
+  border-color: var(--primary-500);
 }
 
 .resumeUploadArea input[type="file"] {
@@ -117,8 +130,8 @@
   gap: var(--space-2);
   cursor: pointer;
   font-size: var(--text-sm);
-  color: var(--brand-600, var(--brand-500));
-  font-weight: 500;
+  color: var(--primary-600);
+  font-weight: var(--font-medium);
 }
 
 .uploadLabel:hover {
@@ -143,7 +156,12 @@
   padding: var(--space-3) var(--space-4);
   border: var(--border-width) solid var(--border-subtle);
   border-radius: var(--radius-md);
-  background: var(--surface-primary);
+  background: var(--surface-card);
+  transition: box-shadow var(--transition-fast);
+}
+
+.resumeItem:hover {
+  box-shadow: var(--shadow-xs);
 }
 
 .resumeInfo {
@@ -165,8 +183,10 @@
 
 .resumeLink {
   font-size: var(--text-sm);
-  color: var(--brand-600, var(--brand-500));
+  color: var(--primary-600);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .resumeLink:hover {

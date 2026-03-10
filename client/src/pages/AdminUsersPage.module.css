@@ -1,42 +1,47 @@
+/* src/pages/AdminUsersPage.module.css — Clean minimal */
+
 .container {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: var(--space-6) var(--space-4);
 }
 
 .header {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-6);
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary, #111);
-  margin: 0 0 0.25rem;
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1);
 }
 
 .subtitle {
-  color: var(--text-secondary, #666);
-  font-size: 0.95rem;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
   margin: 0;
 }
 
 /* Filters */
 .filters {
   display: flex;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
   flex-wrap: wrap;
 }
 
 .filterSelect,
 .filterInput {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border-primary, #ddd);
-  border-radius: 0.5rem;
-  background: var(--bg-surface, #fff);
-  color: var(--text-primary, #111);
-  font-size: 0.875rem;
+  height: 36px;
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-family: inherit;
 }
 
 .filterInput {
@@ -46,31 +51,31 @@
 /* Table */
 .tableWrapper {
   overflow-x: auto;
-  border: 1px solid var(--border-primary, #ddd);
-  border-radius: 0.75rem;
-  background: var(--bg-surface, #fff);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--surface-card);
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 }
 
 .table th,
 .table td {
-  padding: 0.75rem 1rem;
+  padding: var(--space-3) var(--space-4);
   text-align: left;
-  border-bottom: 1px solid var(--border-primary, #eee);
+  border-bottom: var(--border-width) solid var(--border-subtle);
 }
 
 .table th {
-  font-weight: 600;
-  color: var(--text-secondary, #666);
-  background: var(--bg-muted, #f9f9f9);
-  font-size: 0.8rem;
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+  background: var(--surface-hover);
+  font-size: var(--text-xs);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .table tr:last-child td {
@@ -78,60 +83,70 @@
 }
 
 .roleBadge {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
   text-transform: capitalize;
 }
 
 .roleAdmin {
-  background: #fde68a;
-  color: #92400e;
+  background: var(--warning-bg);
+  color: var(--warning-text);
 }
 
 .roleRecruiter {
-  background: #bfdbfe;
-  color: #1e40af;
+  background: var(--primary-50);
+  color: var(--primary-600);
 }
 
 .roleCandidate {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+[data-theme='dark'] .roleRecruiter {
+  background: color-mix(in srgb, var(--primary-500) 15%, transparent);
+  color: var(--primary-500);
 }
 
 /* Actions cell */
 .actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: center;
   flex-wrap: wrap;
 }
 
 .actionSelect {
-  padding: 0.3rem 0.5rem;
-  border: 1px solid var(--border-primary, #ddd);
-  border-radius: 0.4rem;
-  font-size: 0.8rem;
-  background: var(--bg-surface, #fff);
-  color: var(--text-primary, #111);
+  height: 32px;
+  padding: 0 var(--space-2);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: var(--text-xs);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-family: inherit;
 }
 
 .saveBtn {
-  padding: 0.3rem 0.75rem;
+  height: 32px;
+  padding: 0 var(--space-3);
   border: none;
-  border-radius: 0.4rem;
-  background: var(--color-primary, #3b82f6);
-  color: #fff;
-  font-size: 0.8rem;
-  font-weight: 600;
+  border-radius: var(--radius-md);
+  background: var(--primary-600);
+  color: var(--primary-foreground);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  font-family: inherit;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: background-color var(--transition-fast);
 }
 
-.saveBtn:hover {
-  opacity: 0.9;
+.saveBtn:hover:not(:disabled) {
+  background: var(--primary-700);
 }
 
 .saveBtn:disabled {
@@ -144,18 +159,25 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
 }
 
 .pageBtn {
-  padding: 0.4rem 1rem;
-  border: 1px solid var(--border-primary, #ddd);
-  border-radius: 0.4rem;
-  background: var(--bg-surface, #fff);
-  color: var(--text-primary, #111);
+  height: 32px;
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-primary);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--text-xs);
+  font-family: inherit;
+  transition: background-color var(--transition-fast);
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--surface-hover);
 }
 
 .pageBtn:disabled {
@@ -164,37 +186,39 @@
 }
 
 .pageInfo {
-  font-size: 0.85rem;
-  color: var(--text-secondary, #666);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Messages */
 .successMsg {
-  padding: 0.75rem 1rem;
-  background: #d1fae5;
-  color: #065f46;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
+  padding: var(--space-3) var(--space-4);
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
 }
 
 .errorMsg {
-  padding: 0.75rem 1rem;
-  background: #fee2e2;
-  color: #991b1b;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
+  padding: var(--space-3) var(--space-4);
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
 }
 
 .emptyState {
   text-align: center;
-  padding: 3rem 1rem;
-  color: var(--text-secondary, #666);
+  padding: var(--space-8) var(--space-4);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
 }
 
 .loading {
   text-align: center;
-  padding: 3rem;
-  color: var(--text-secondary, #666);
+  padding: var(--space-8);
+  color: var(--text-secondary);
 }

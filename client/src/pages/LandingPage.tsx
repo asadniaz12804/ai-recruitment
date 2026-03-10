@@ -1,6 +1,8 @@
 // src/pages/LandingPage.tsx — AI Recruitment with "Softly" Design Aesthetic
 import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { getHomePath } from '../lib/auth';
 import { GrainOverlay } from '../components/shared/GrainOverlay';
 import s from './SoftlyLanding.module.css';
 
@@ -88,6 +90,9 @@ const plans = [
    LANDING PAGE
    ────────────────────────────────────────── */
 export const LandingPage = () => {
+  const { user, logout } = useAuth();
+  const homePath = user ? getHomePath(user) : null;
+
   return (
     <div className={s.layout}>
       <GrainOverlay />
@@ -102,8 +107,25 @@ export const LandingPage = () => {
           <a href="#features" className={s.navLink}>Features</a>
           <a href="#how-it-works" className={s.navLink}>How it works</a>
           <a href="#pricing" className={s.navLink}>Pricing</a>
+          <Link to="/jobs" className={s.navLink}>Job Board</Link>
         </div>
-        <Link to="/ai-recruitment/devsinc" className={s.navCta}>Demo dashboard</Link>
+        {user ? (
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <Link to={homePath!} className={s.navCta}>Dashboard</Link>
+            <button
+              onClick={() => { logout(); }}
+              className={s.navLink}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', font: 'inherit' }}
+            >
+              Sign out
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <Link to="/login" className={s.navLink}>Sign in</Link>
+            <Link to="/register" className={s.navCta}>Get started</Link>
+          </div>
+        )}
       </nav>
 
       {/* ── HERO ── */}
@@ -120,8 +142,8 @@ export const LandingPage = () => {
             applicant tracking, automated screening, and dynamic workflows — without the clutter.
           </p>
           <div className={s.heroCtas}>
-            <Link to="/ai-recruitment/devsinc" className={s.ctaPrimary}>
-              View demo tenant
+            <Link to={user ? homePath! : "/register"} className={s.ctaPrimary}>
+              {user ? 'Go to dashboard' : 'Get started free'}
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </Link>
             <a href="#features" className={s.ctaSecondary}>See how it works</a>
@@ -256,7 +278,7 @@ export const LandingPage = () => {
                   ))}
                 </ul>
                 <Link
-                  to="/ai-recruitment/devsinc"
+                  to={user ? homePath! : "/register"}
                   className={plan.highlighted ? s.ctaPrimary : s.ctaSecondary}
                   style={{ textAlign: 'center', justifyContent: 'center', width: '100%' }}
                 >

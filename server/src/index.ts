@@ -30,6 +30,12 @@ import { startWorkers } from "./jobs/index.js";
 const app = express();
 
 const PORT = parseInt(process.env.PORT ?? "5000", 10);
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+
+// Trust first proxy (Render, Fly, etc.) so req.protocol / req.ip are correct
+if (IS_PRODUCTION) {
+  app.set("trust proxy", 1);
+}
 
 // --------------- CORS allowlist ---------------
 // In production, set CORS_ORIGIN to a comma-separated list of allowed origins.

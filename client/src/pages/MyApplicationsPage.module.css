@@ -1,111 +1,149 @@
-.wrapper {
-  min-height: 100vh;
-  background: var(--bg-base, #fafafa);
-}
+/* src/pages/MyApplicationsPage.module.css — Clean minimal */
 
-.navbar {
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--border-primary, #e5e5e5);
-  background: var(--bg-surface, #fff);
-}
-
-.navInner {
-  max-width: 960px;
-  margin: 0 auto;
+.container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--space-6);
 }
 
-.navBrand {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--text-primary, #111);
-  text-decoration: none;
-}
-
-.navActions {
+/* Page header */
+.pageHeader {
   display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.navLink {
-  font-size: 0.85rem;
-  color: var(--color-primary, #3b82f6);
-  text-decoration: none;
-}
-
-.main {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0 0 1.5rem;
-  color: var(--text-primary, #111);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  margin: 0;
 }
 
-.loading {
-  text-align: center;
-  padding: 3rem;
-  color: var(--text-secondary, #666);
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Loading skeletons */
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.skeleton {
+  border-radius: var(--radius-md);
+  background: var(--surface-hover);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .errorMsg {
-  padding: 0.75rem 1rem;
-  background: #fee2e2;
-  color: #991b1b;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
+  padding: var(--space-3) var(--space-4);
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
 }
 
+/* Empty state */
 .emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-10) 0;
   text-align: center;
-  padding: 3rem;
-  color: var(--text-secondary, #888);
 }
 
-.emptyState a {
-  color: var(--color-primary, #3b82f6);
+.emptyTitle {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0;
 }
 
-/* Application cards */
+.emptyText {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.emptyLink {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--primary-600);
+  color: var(--primary-foreground);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  text-decoration: none;
+  margin-top: var(--space-2);
+}
+
+.emptyLink:hover {
+  background: var(--primary-700);
+}
+
+/* Application list */
 .appList {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
+/* Application card */
 .appCard {
-  background: var(--bg-surface, #fff);
-  border: 1px solid var(--border-primary, #e5e5e5);
-  border-radius: 0.75rem;
-  padding: 1rem 1.25rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  transition: box-shadow 0.15s;
+  background: var(--surface-card);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: box-shadow var(--transition-fast);
 }
 
 .appCard:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
+}
+
+.appCardExpanded {
+  box-shadow: var(--shadow-sm);
+}
+
+.appCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
 }
 
 .appInfo {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
+  min-width: 0;
 }
 
 .appJobTitle {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary, #111);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
 }
 
 .appJobTitle a {
@@ -118,75 +156,200 @@
 }
 
 .appMeta {
-  font-size: 0.8rem;
-  color: var(--text-secondary, #666);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-1);
+  align-items: center;
   flex-wrap: wrap;
 }
 
+.metaDot {
+  color: var(--text-tertiary);
+}
+
 .appDate {
-  font-size: 0.75rem;
-  color: var(--text-muted, #aaa);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.appRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  color: var(--text-tertiary);
 }
 
 /* Stage badge */
 .stageBadge {
-  display: inline-block;
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
   text-transform: capitalize;
   white-space: nowrap;
 }
 
-.stageApplied {
-  background: #dbeafe;
-  color: #1e40af;
+.stageApplied { background: var(--primary-50); color: var(--primary-600); }
+.stageScreening { background: var(--warning-bg); color: var(--warning-text); }
+.stageInterview { background: #e0e7ff; color: #3730a3; }
+.stageOffer { background: var(--success-bg); color: var(--success-text); }
+.stageHired { background: #bbf7d0; color: #14532d; }
+.stageRejected { background: var(--danger-bg); color: var(--danger-text); }
+
+[data-theme='dark'] .stageInterview { background: rgba(99,102,241,.15); color: #a5b4fc; }
+[data-theme='dark'] .stageHired { background: rgba(34,197,94,.15); color: #86efac; }
+
+/* Expanded details */
+.appDetails {
+  border-top: var(--border-width) solid var(--border-subtle);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
-.stageScreening {
-  background: #fef3c7;
-  color: #92400e;
+.detailSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
 }
 
-.stageInterview {
-  background: #e0e7ff;
-  color: #3730a3;
+.detailSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.stageOffer {
-  background: #d1fae5;
-  color: #065f46;
+.detailItem {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  background: var(--surface-hover);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.stageHired {
-  background: #bbf7d0;
-  color: #14532d;
+.detailMeta {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.stageRejected {
-  background: #fecaca;
-  color: #991b1b;
+.emptyDetail {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-style: italic;
 }
+
+/* Offer elements */
+.offerHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.offerSalary {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  text-transform: capitalize;
+}
+
+.statusDraft { background: var(--surface-active); color: var(--text-secondary); }
+.statusSent { background: var(--primary-50); color: var(--primary-600); }
+.statusAccepted { background: var(--success-bg); color: var(--success-text); }
+.statusDeclined { background: var(--danger-bg); color: var(--danger-text); }
+
+.offerActions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.btnAccept {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-1) var(--space-3);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--success-text);
+  color: #fff;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+}
+
+.btnAccept:disabled { opacity: 0.5; cursor: default; }
+
+.btnDecline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-1) var(--space-3);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--danger-text);
+  color: #fff;
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+}
+
+.btnDecline:disabled { opacity: 0.5; cursor: default; }
 
 /* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
 }
 
 .pageBtn {
-  padding: 0.4rem 0.85rem;
-  border: 1px solid var(--border-primary, #e5e5e5);
-  border-radius: 0.5rem;
-  background: var(--bg-surface, #fff);
-  color: var(--text-primary, #333);
-  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 var(--space-3);
+  border: var(--border-width) solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-card);
+  color: var(--text-primary);
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
   cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.pageBtn:hover:not(:disabled) {
+  background: var(--surface-hover);
 }
 
 .pageBtn:disabled {
@@ -195,108 +358,7 @@
 }
 
 .pageInfo {
-  display: flex;
-  align-items: center;
-  font-size: 0.8rem;
-  color: var(--text-secondary, #666);
-}
-
-/* Phase 6: expandable detail */
-.appCardExpanded {
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.appCardTopRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  cursor: pointer;
-}
-
-.expandHint {
-  font-size: 0.7rem;
-  color: var(--text-muted, #aaa);
-  margin-top: 0.2rem;
-}
-
-.detailSection {
-  border-top: 1px solid var(--border-primary, #e5e5e5);
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-}
-
-.detailSectionTitle {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-primary, #111);
-  margin-bottom: 0.5rem;
-}
-
-.detailItem {
-  font-size: 0.8rem;
-  color: var(--text-primary, #333);
-  background: var(--bg-muted, #f9f9f9);
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  margin-bottom: 0.35rem;
-}
-
-.detailMeta {
-  font-size: 0.7rem;
-  color: var(--text-muted, #aaa);
-  margin-top: 0.1rem;
-}
-
-.statusBadge {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.statusDraft { background: #f3f4f6; color: #6b7280; }
-.statusSent { background: #dbeafe; color: #1e40af; }
-.statusAccepted { background: #d1fae5; color: #065f46; }
-.statusDeclined { background: #fecaca; color: #991b1b; }
-
-.offerActions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.35rem;
-}
-
-.btnAccept {
-  padding: 0.3rem 0.7rem;
-  border: none;
-  border-radius: 0.4rem;
-  background: #16a34a;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btnAccept:disabled { opacity: 0.5; cursor: default; }
-
-.btnDecline {
-  padding: 0.3rem 0.7rem;
-  border: none;
-  border-radius: 0.4rem;
-  background: #dc2626;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btnDecline:disabled { opacity: 0.5; cursor: default; }
-
-.emptyDetail {
-  font-size: 0.78rem;
-  color: var(--text-muted, #aaa);
-  font-style: italic;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
 }
