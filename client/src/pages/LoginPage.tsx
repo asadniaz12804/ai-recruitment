@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getHomePath } from "../lib/auth";
@@ -6,7 +6,7 @@ import { ApiError } from "../lib/api";
 import styles from "./AuthPage.module.css";
 
 export function LoginPage() {
-  const { login, user } = useAuth();
+  const { login, logout, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState("");
@@ -14,11 +14,21 @@ export function LoginPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // If already logged in, redirect
-  if (user) {
-    const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
-    navigate(from || getHomePath(user), { replace: true });
-  }
+  // If the user explicitly navigated to /login, log them out first
+  // so they can switch accounts. Only auto-redirect when sent here
+  // from RequireAuth (location.state.from exists).
+  useEffect(() => {
+    if (user) {
+      const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
+      if (from) {
+        // Sent here by RequireAuth — already logged in, redirect back
+        navigate(from, { replace: true });
+      } else {
+        // User navigated to /login explicitly — clear old session
+        logout();
+      }
+    }
+  }, []); // only on mount
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

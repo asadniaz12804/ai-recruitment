@@ -40,7 +40,7 @@ if (IS_PRODUCTION) {
 // --------------- CORS allowlist ---------------
 // In production, set CORS_ORIGIN to a comma-separated list of allowed origins.
 // e.g. CORS_ORIGIN=https://app.example.com,https://admin.example.com
-const CORS_ORIGIN = process.env.CORS_ORIGIN ?? "http://localhost:5173";
+const CORS_ORIGIN = process.env.CORS_ORIGIN ?? "http://localhost:5173,http://localhost:5174";
 const allowedOrigins = CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean);
 
 // --------------- Middleware ---------------

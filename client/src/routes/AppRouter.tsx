@@ -19,6 +19,7 @@ import { JobDetailPage } from '../pages/JobDetailPage';
 import { CandidateProfilePage } from '../pages/CandidateProfilePage';
 import { MyApplicationsPage } from '../pages/MyApplicationsPage';
 import { RecruiterApplicantsPage } from '../pages/RecruiterApplicantsPage';
+import { RecruiterCandidateDetailPage } from '../pages/RecruiterCandidateDetailPage';
 import { RequireAuth } from '../components/shared/RequireAuth';
 
 export const AppRouter = () => {
@@ -88,6 +89,7 @@ export const AppRouter = () => {
                     <Route path="jobs" element={<JobsPage />} />
                     <Route path="workflow" element={<WorkflowPage />} />
                     <Route path="candidates" element={<CandidatesPage />} />
+                    <Route path="candidates/:candidateId" element={<RecruiterCandidateDetailPage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="settings" element={<SettingsPage />} />
                 </Route>

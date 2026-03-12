@@ -22,19 +22,33 @@ export const DashboardOverview = () => {
   useEffect(() => {
     async function load() {
       try {
-        const [jobsRes, appsRes] = await Promise.all([
-          recruiterListJobs({ limit: 1, status: 'open' }),
-          recruiterListApplications({ limit: 200 }),
-        ]);
+        // Fetch all open jobs count
+        const jobsRes = await recruiterListJobs({ limit: 1, status: 'open' });
+        const activeJobs = jobsRes.pagination.total;
+
+        // Fetch ALL recruiter jobs (any status) to aggregate applications
+        const allJobsRes = await recruiterListJobs({ limit: 100 });
+        const allJobs = allJobsRes.items;
+
+        // Fetch applications for every job
+        const appResults = await Promise.all(
+          allJobs.map((job) =>
+            recruiterListApplications(job.id, { limit: 200 }).catch(() => ({ items: [], pagination: { total: 0 } }))
+          )
+        );
 
         const stageCounts: Record<string, number> = {};
-        for (const app of appsRes.items) {
-          stageCounts[app.stage] = (stageCounts[app.stage] || 0) + 1;
+        let totalApplications = 0;
+        for (const res of appResults) {
+          totalApplications += res.items.length;
+          for (const app of res.items) {
+            stageCounts[app.stage] = (stageCounts[app.stage] || 0) + 1;
+          }
         }
 
         setStats({
-          activeJobs: jobsRes.pagination.total,
-          totalApplications: appsRes.pagination.total,
+          activeJobs,
+          totalApplications,
           interviewStage: stageCounts['interview'] || 0,
           offerStage: stageCounts['offer'] || 0,
           stageCounts,

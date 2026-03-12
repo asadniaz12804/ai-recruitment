@@ -169,6 +169,68 @@ export async function addApplicationNote(
 
 // ==================== Phase 6: Interviews ====================
 
+// --------------- Recruiter: Candidate Detail ---------------
+
+export interface RecruiterCandidateDetailResume {
+  id: string;
+  originalFileName: string;
+  mimeType: string;
+  sizeBytes: number;
+  url: string;
+  parseStatus: string;
+  uploadedAt: string;
+}
+
+export interface RecruiterCandidateDetailApp {
+  id: string;
+  stage: ApplicationStage;
+  matchScore: number | null;
+  aiSummary: string | null;
+  createdAt: string;
+  updatedAt: string;
+  recruiterNotes: { id: string; text: string; createdAt: string }[];
+  stageHistory: { from: string; to: string; changedAt: string }[];
+  job: {
+    id: string;
+    title: string;
+    status: string;
+    employmentType: string;
+    location: string | null;
+  } | null;
+}
+
+export interface RecruiterCandidateDetail {
+  candidate: {
+    id: string;
+    email: string;
+    name: string | null;
+  };
+  profile: {
+    headline: string | null;
+    summary: string | null;
+    skills: string[];
+    yearsExperience: number | null;
+    location: string | null;
+    links: {
+      linkedin: string | null;
+      github: string | null;
+      portfolio: string | null;
+    };
+  } | null;
+  resumes: RecruiterCandidateDetailResume[];
+  applications: RecruiterCandidateDetailApp[];
+}
+
+export async function recruiterGetCandidate(
+  candidateId: string
+): Promise<RecruiterCandidateDetail> {
+  return api<RecruiterCandidateDetail>(
+    `/api/recruiter/candidates/${candidateId}`
+  );
+}
+
+// ==================== Phase 6: Interviews ====================
+
 export type InterviewMode = "phone" | "video" | "onsite";
 
 export interface InterviewRecord {
