@@ -26,5 +26,15 @@ export function RequireAuth({ children, roles }: RequireAuthProps) {
     return <Navigate to="/ai-recruitment" replace />;
   }
 
+  // Enforce recruiter onboarding: recruiters without a company are
+  // locked out of all dashboard routes and redirected to /company/new.
+  if (
+    user.role === "recruiter" &&
+    !user.companyId &&
+    location.pathname !== "/company/new"
+  ) {
+    return <Navigate to="/company/new" replace />;
+  }
+
   return <>{children}</>;
 }

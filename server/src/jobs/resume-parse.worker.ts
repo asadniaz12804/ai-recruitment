@@ -11,11 +11,11 @@
  *
  * On failure after all retries: sets parseStatus = "failed".
  */
-import { Worker, type Job } from "bullmq";
+import { Worker } from "bullmq";
 import { getRedisConnection } from "../lib/redis.js";
 import { getAiProvider } from "../ai/index.js";
 import { Resume } from "../models/Resume.js";
-import { getApplicationScoreQueue, type ApplicationScoreJobData } from "./queues.js";
+import { enqueueApplicationScore } from "./enqueue.js";
 import { Application } from "../models/Application.js";
 import { logger } from "../logger.js";
 import type { ResumeParseJobData } from "./queues.js";
@@ -47,7 +47,7 @@ async function extractText(buffer: Buffer, mimeType: string): Promise<string> {
   return buffer.toString("utf-8");
 }
 
-async function processResumeParseJob(job: Job<ResumeParseJobData>): Promise<void> {
+export async function processResumeParseJob(job: { id?: string; data: ResumeParseJobData }): Promise<void> {
   const { resumeId } = job.data;
   logger.info({ jobId: job.id, resumeId }, "resume-parse: start");
 
@@ -98,9 +98,8 @@ async function processResumeParseJob(job: Job<ResumeParseJobData>): Promise<void
 
   // Enqueue scoring for any applications that reference this resume
   const apps = await Application.find({ resumeId: resume._id }).select("_id").lean();
-  const scoreQueue = getApplicationScoreQueue();
   for (const app of apps) {
-    await scoreQueue.add("score", { applicationId: app._id.toString() } satisfies ApplicationScoreJobData);
+    enqueueApplicationScore(app._id.toString());
   }
 }
 

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { Plus, Search, Trash2, Edit, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Search, Trash2, Edit, Users, ChevronLeft, ChevronRight, LinkIcon } from 'lucide-react';
 import { JobCreateModal } from '../modules/jobs/JobCreateModal';
 import { recruiterListJobs, deleteJob, type Job, type RecruiterJobParams } from '../lib/jobs';
 import styles from './JobsPage.module.css';
@@ -58,6 +58,13 @@ export const JobsPage = () => {
     const handleModalClose = useCallback(() => {
         setIsModalOpen(false);
         setEditingJob(null);
+    }, []);
+
+    const handleCopyLink = useCallback((job: Job) => {
+        const url = `${window.location.origin}/jobs/${job.id}`;
+        navigator.clipboard.writeText(url)
+            .then(() => alert('Public job link copied to clipboard!'))
+            .catch(() => alert('Failed to copy link.'));
     }, []);
 
     const jobs = data?.items ?? [];
@@ -141,7 +148,10 @@ export const JobsPage = () => {
                                             <Link to={`/recruiter/jobs/${job.id}/applicants`} className={styles.actionBtn} aria-label="View applicants" title="View applicants">
                                                 <Users size={16} />
                                             </Link>
-                                            <button className={styles.actionBtn} aria-label="Edit job" onClick={() => handleEdit(job)}>
+                                            <button className={styles.actionBtn} aria-label="Copy public link" title="Copy public link" onClick={() => handleCopyLink(job)}>
+                                                <LinkIcon size={16} />
+                                            </button>
+                                            <button className={styles.actionBtn} aria-label="Edit job" title="Edit job" onClick={() => handleEdit(job)}>
                                                 <Edit size={16} />
                                             </button>
                                             <button className={styles.actionBtn} aria-label="Delete job" onClick={() => handleDelete(job)} style={{ color: 'var(--danger-600)' }}>

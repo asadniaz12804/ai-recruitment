@@ -1,17 +1,15 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { Search, Filter, Star, ExternalLink, ChevronRight, Loader2, Inbox, Eye } from 'lucide-react';
+import { Search, Star, Loader2, Inbox, Eye } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuth } from '../context/AuthContext';
 import { recruiterListJobs, type Job } from '../lib/jobs';
 import {
     recruiterListApplications,
     updateApplicationStage,
-    APPLICATION_STAGES,
     type RecruiterApplication,
     type ApplicationStage,
 } from '../lib/applications';
@@ -209,8 +207,8 @@ export const CandidatesPage = () => {
                                                 padding="md"
                                                 className={styles.candidateCard}
                                                 onClick={() => {
-                                                    if (app.candidate?.id && user?.companyName) {
-                                                        navigate(`/ai-recruitment/${encodeURIComponent(user.companyName)}/candidates/${app.candidate.id}`);
+                                                    if (app.candidate?.id && user?.companySlug) {
+                                                        navigate(`/ai-recruitment/${user.companySlug}/candidates/${app.candidate.id}`);
                                                     }
                                                 }}
                                                 style={{ cursor: app.candidate?.id ? 'pointer' : undefined }}
@@ -344,8 +342,8 @@ export const CandidatesPage = () => {
                                                         className={styles.viewProfileBtn}
                                                         title="View full profile"
                                                         onClick={() => {
-                                                            if (user?.companyName) {
-                                                                navigate(`/ai-recruitment/${encodeURIComponent(user.companyName)}/candidates/${app.candidate!.id}`);
+                                                            if (user?.companySlug) {
+                                                                navigate(`/ai-recruitment/${user.companySlug}/candidates/${app.candidate!.id}`);
                                                             }
                                                         }}
                                                     >

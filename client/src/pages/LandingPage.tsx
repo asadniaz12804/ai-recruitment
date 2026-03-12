@@ -1,6 +1,6 @@
 // src/pages/LandingPage.tsx — AI Recruitment with "Softly" Design Aesthetic
 import { useState, useEffect, useRef, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getHomePath } from '../lib/auth';
 import { GrainOverlay } from '../components/shared/GrainOverlay';
@@ -91,7 +91,16 @@ const plans = [
    ────────────────────────────────────────── */
 export const LandingPage = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const homePath = user ? getHomePath(user) : null;
+  const [magicEmail, setMagicEmail] = useState('');
+
+  const handleMagicSignup = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (magicEmail) {
+      navigate(`/register?email=${encodeURIComponent(magicEmail)}`);
+    }
+  };
 
   return (
     <div className={s.layout}>
@@ -123,7 +132,7 @@ export const LandingPage = () => {
         ) : (
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
             <Link to="/login" className={s.navLink}>Sign in</Link>
-            <Link to="/register" className={s.navCta}>Get started</Link>
+            <Link to="/demo" className={s.navCta}>View demo</Link>
           </div>
         )}
       </nav>
@@ -143,10 +152,10 @@ export const LandingPage = () => {
           </p>
           <div className={s.heroCtas}>
             <Link to={user ? homePath! : "/register"} className={s.ctaPrimary}>
-              {user ? 'Go to dashboard' : 'Get started free'}
+              {user ? 'Go to dashboard' : 'Start free trial'}
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
             </Link>
-            <a href="#features" className={s.ctaSecondary}>See how it works</a>
+            <Link to="/demo" className={s.ctaSecondary}>View interactive demo</Link>
           </div>
         </div>
       </section>
@@ -309,17 +318,18 @@ export const LandingPage = () => {
             <div className={s.waitlistIcon} />
             <h2 className={s.waitlistTitle}>Ready to transform your hiring?</h2>
             <p className={s.waitlistSub}>
-              Get early access to AI Recruit. No spam — just an invite when your
-              tenant is ready.
+              Start tracking, evaluating, and hiring better today. No credit card required. Setup takes 2 minutes.
             </p>
-            <form className={s.waitlistForm} onSubmit={(e) => e.preventDefault()}>
+            <form className={s.waitlistForm} onSubmit={handleMagicSignup}>
               <input
                 type="email"
                 placeholder="work@company.com"
                 className={s.waitlistInput}
+                value={magicEmail}
+                onChange={(e) => setMagicEmail(e.target.value)}
                 required
               />
-              <button type="submit" className={s.waitlistSubmit}>Request access</button>
+              <button type="submit" className={s.waitlistSubmit}>Start for free</button>
             </form>
           </div>
         </section>

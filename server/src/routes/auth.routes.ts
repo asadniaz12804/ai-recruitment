@@ -2,7 +2,13 @@ import { Router, type Request, type Response, type NextFunction } from "express"
 import { validate } from "../middleware/validate.js";
 import { requireAuth } from "../middleware/auth.js";
 import { authLimiter } from "../middleware/rate-limit.js";
-import { registerSchema, loginSchema } from "../lib/validation.js";
+import {
+  registerSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  verifyEmailSchema,
+} from "../lib/validation.js";
 import { sendSuccess } from "../lib/errors.js";
 import * as authService from "../services/auth.service.js";
 
@@ -31,6 +37,65 @@ router.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await authService.login(req.body, res);
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// --------------- POST /api/auth/verify-email ---------------
+router.post(
+  "/verify-email",
+  validate(verifyEmailSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await authService.verifyEmail(req.body.token);
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// --------------- POST /api/auth/resend-verification ---------------
+router.post(
+  "/resend-verification",
+  requireAuth,
+  authLimiter,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await authService.resendVerification(req.user!.id);
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// --------------- POST /api/auth/forgot-password ---------------
+router.post(
+  "/forgot-password",
+  authLimiter,
+  validate(forgotPasswordSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await authService.forgotPassword(req.body.email);
+      sendSuccess(res, result);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+// --------------- POST /api/auth/reset-password ---------------
+router.post(
+  "/reset-password",
+  authLimiter,
+  validate(resetPasswordSchema),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await authService.resetPassword(req.body.token, req.body.password);
       sendSuccess(res, result);
     } catch (err) {
       next(err);

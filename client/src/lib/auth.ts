@@ -8,6 +8,8 @@ export interface AuthUser {
   avatarUrl: string | null;
   companyId?: string | null;
   companyName?: string | null;
+  companySlug?: string | null;
+  isVerified: boolean;
   createdAt: string;
 }
 
@@ -22,8 +24,8 @@ export function getHomePath(user: AuthUser): string {
     case "admin":
       return "/admin/users";
     case "recruiter":
-      if (user.companyName) {
-        return `/ai-recruitment/${encodeURIComponent(user.companyName)}`;
+      if (user.companySlug) {
+        return `/ai-recruitment/${user.companySlug}`;
       }
       return "/company/new";
     case "candidate":
@@ -76,4 +78,35 @@ export async function logoutUser(): Promise<void> {
 
 export async function fetchMe(): Promise<AuthUser> {
   return api<AuthUser>("/api/me");
+}
+
+// --------------- Email Verification ---------------
+
+export async function verifyEmail(token: string): Promise<{ message: string }> {
+  return api<{ message: string }>("/api/auth/verify-email", {
+    method: "POST",
+    body: { token },
+  });
+}
+
+export async function resendVerification(): Promise<{ message: string }> {
+  return api<{ message: string }>("/api/auth/resend-verification", {
+    method: "POST",
+  });
+}
+
+// --------------- Password Reset ---------------
+
+export async function forgotPassword(email: string): Promise<{ message: string }> {
+  return api<{ message: string }>("/api/auth/forgot-password", {
+    method: "POST",
+    body: { email },
+  });
+}
+
+export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
+  return api<{ message: string }>("/api/auth/reset-password", {
+    method: "POST",
+    body: { token, password },
+  });
 }

@@ -16,24 +16,22 @@
 import { Router, type Request, type Response, type NextFunction } from "express";
 import { requireAuth } from "../middleware/auth.js";
 import {
-  requireCandidate,
   requireRecruiterCompany,
   recruiterCanAccessJob,
   recruiterCanAccessApplication,
 } from "../middleware/application-access.js";
+import { resumeUpload } from "../middleware/upload.js";
 import { validate, validateQuery, validateParams } from "../middleware/validate.js";
 import { writeLimiter } from "../middleware/rate-limit.js";
 import {
   applyToJobSchema,
   updateApplicationStageSchema,
   addApplicationNoteSchema,
-  candidateApplicationsQuerySchema,
   recruiterApplicationsQuerySchema,
-  type CandidateApplicationsQuery,
   type RecruiterApplicationsQuery,
 } from "../lib/validation.applications.js";
 import { idParamSchema, jobIdParamSchema } from "../lib/validation.params.js";
-import { sendSuccess } from "../lib/errors.js";
+import { sendSuccess, AppError } from "../lib/errors.js";
 import * as applicationService from "../services/application.service.js";
 import type { IApplication } from "../models/Application.js";
 
@@ -43,61 +41,37 @@ import type { IApplication } from "../models/Application.js";
 
 export const candidateApplicationRouter = Router();
 
-// POST /api/jobs/:id/apply
+// POST /api/jobs/:id/apply (Public Endpoint)
 candidateApplicationRouter.post(
   "/jobs/:id/apply",
-  requireAuth,
-  requireCandidate,
   validateParams(idParamSchema),
   writeLimiter,
+  (req: Request, res: Response, next: NextFunction) => {
+    resumeUpload(req, res, (err: unknown) => {
+      if (err) {
+        if (err instanceof Error && err.message.includes("File too large")) {
+          return next(new AppError(413, "file_too_large", "File exceeds the maximum allowed size"));
+        }
+        if (err instanceof Error && err.message.includes("Invalid file type")) {
+          return next(new AppError(400, "invalid_file_type", err.message));
+        }
+        return next(err);
+      }
+      next();
+    });
+  },
   validate(applyToJobSchema),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await applicationService.applyToJob(
+      if (!req.file) {
+        return next(new AppError(400, "no_file", 'No resume file uploaded. Use field name "file".'));
+      }
+      const result = await applicationService.applyPublicToJob(
         req.params.id as string,
-        req.user!.id,
-        req.body
+        req.body,
+        req.file
       );
       sendSuccess(res, result, 201);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-// GET /api/applications/me
-candidateApplicationRouter.get(
-  "/applications/me",
-  requireAuth,
-  requireCandidate,
-  validateQuery(candidateApplicationsQuerySchema),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const query = (req as unknown as Record<string, unknown>)
-        .parsedQuery as CandidateApplicationsQuery;
-      const result = await applicationService.listCandidateApplications(
-        req.user!.id,
-        query
-      );
-      sendSuccess(res, result);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-// GET /api/applications/:id
-candidateApplicationRouter.get(
-  "/applications/:id",
-  requireAuth,
-  validateParams(idParamSchema),
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const result = await applicationService.getApplicationById(
-        req.params.id as string,
-        req.user!
-      );
-      sendSuccess(res, result);
     } catch (err) {
       next(err);
     }

@@ -86,6 +86,9 @@ export function LoginPage() {
             {submitting ? "Signing in…" : "Sign In"}
           </button>
         </form>
+        <div className={styles.footer} style={{ marginTop: 'var(--space-3)' }}>
+          <Link to="/forgot-password">Forgot password?</Link>
+        </div>
         <div className={styles.footer}>
           Don't have an account? <Link to="/register">Sign up</Link>
         </div>

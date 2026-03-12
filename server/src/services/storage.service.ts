@@ -8,6 +8,8 @@
  * handling untrusted uploads in production.
  */
 import { Readable } from "node:stream";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { cloudinary } from "../lib/cloudinary.js";
 
 // --------------- Interface ---------------
@@ -68,27 +70,36 @@ class CloudinaryStorageService implements StorageService {
   }
 }
 
-// --------------- Fake implementation (for tests) ---------------
+// --------------- Local implementation (for MVP without Cloudinary) ---------------
 
-export class FakeStorageService implements StorageService {
-  uploads: UploadResult[] = [];
-  removed: string[] = [];
-
+export class LocalStorageService implements StorageService {
   async upload(
-    _buffer: Buffer,
+    buffer: Buffer,
     options: { folder: string; publicId: string }
   ): Promise<UploadResult> {
-    const result: UploadResult = {
-      url: `https://fake-storage.test/${options.folder}/${options.publicId}`,
-      publicIdOrKey: `${options.folder}/${options.publicId}`,
-      provider: "cloudinary",
+    const pubId = options.publicId.replace(/[^a-zA-Z0-9_-]/g, "_");
+    const relPath = path.join(options.folder, pubId);
+    // write to <root>/uploads
+    const absPath = path.join(process.cwd(), "uploads", relPath);
+
+    await fs.mkdir(path.dirname(absPath), { recursive: true });
+    await fs.writeFile(absPath, buffer);
+
+    const baseUrl = process.env.VITE_API_BASE_URL ?? "http://localhost:5000";
+    return {
+      url: `${baseUrl}/uploads/${relPath.replace(/\\/g, "/")}`,
+      publicIdOrKey: relPath,
+      provider: "cloudinary", // keep as cloudinary for now to avoid schema changes
     };
-    this.uploads.push(result);
-    return result;
   }
 
   async remove(publicIdOrKey: string): Promise<void> {
-    this.removed.push(publicIdOrKey);
+    const absPath = path.join(process.cwd(), "uploads", publicIdOrKey);
+    try {
+      await fs.unlink(absPath);
+    } catch {
+      // ignore
+    }
   }
 }
 
@@ -103,4 +114,4 @@ const hasCloudinary =
 
 export const storage: StorageService = hasCloudinary
   ? new CloudinaryStorageService()
-  : new FakeStorageService();
+  : new LocalStorageService();

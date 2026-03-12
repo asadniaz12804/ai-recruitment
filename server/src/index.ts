@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import path from "node:path";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
@@ -68,6 +69,12 @@ app.use(generalLimiter);
 app.use(pinoHttp({ logger, autoLogging: process.env.NODE_ENV !== "test" }));
 
 // --------------- Routes ------------------
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads"), {
+  setHeaders: (res) => {
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  }
+}));
+
 app.get("/health", (_req, res) => {
   res.json({
     status: "ok",

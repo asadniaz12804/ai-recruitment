@@ -5,19 +5,20 @@ import { PublicLayout } from '../layouts/PublicLayout';
 import { LandingPage } from '../pages/LandingPage';
 import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
+import { ForgotPasswordPage } from '../pages/ForgotPasswordPage';
+import { ResetPasswordPage } from '../pages/ResetPasswordPage';
 import { DashboardOverview } from '../pages/DashboardOverview';
 import { JobsPage } from '../pages/JobsPage';
 import { WorkflowPage } from '../pages/WorkflowPage';
 import { CandidatesPage } from '../pages/CandidatesPage';
 import { AnalyticsPage } from '../pages/AnalyticsPage';
+import { DemoDashboardPage } from '../pages/DemoDashboardPage';
 import { SettingsPage } from '../pages/SettingsPage';
 import { PublicJobPage } from '../pages/PublicJobPage';
 import { AdminUsersPage } from '../pages/AdminUsersPage';
 import { CompanyCreatePage } from '../pages/CompanyCreatePage';
 import { JobBoardPage } from '../pages/JobBoardPage';
 import { JobDetailPage } from '../pages/JobDetailPage';
-import { CandidateProfilePage } from '../pages/CandidateProfilePage';
-import { MyApplicationsPage } from '../pages/MyApplicationsPage';
 import { RecruiterApplicantsPage } from '../pages/RecruiterApplicantsPage';
 import { RecruiterCandidateDetailPage } from '../pages/RecruiterCandidateDetailPage';
 import { RequireAuth } from '../components/shared/RequireAuth';
@@ -29,12 +30,17 @@ export const AppRouter = () => {
                 {/* Public Marketing Landing (own layout) */}
                 <Route path="/ai-recruitment" element={<LandingPage />} />
 
+                {/* Demo Dashboard (standalone) */}
+                <Route path="/demo" element={<DemoDashboardPage />} />
+
                 {/* Root Redirect */}
                 <Route path="/" element={<Navigate to="/ai-recruitment" replace />} />
 
                 {/* Auth Pages (standalone, no shared layout) */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
 
                 {/* ===== Public Layout shell (shared nav) ===== */}
                 <Route element={<PublicLayout />}>
@@ -42,17 +48,7 @@ export const AppRouter = () => {
                     <Route path="/jobs" element={<JobBoardPage />} />
                     <Route path="/jobs/:id" element={<JobDetailPage />} />
 
-                    {/* Candidate-only pages */}
-                    <Route path="/candidate/profile" element={
-                        <RequireAuth roles={['candidate']}>
-                            <CandidateProfilePage />
-                        </RequireAuth>
-                    } />
-                    <Route path="/candidate/applications" element={
-                        <RequireAuth roles={['candidate']}>
-                            <MyApplicationsPage />
-                        </RequireAuth>
-                    } />
+                    {/* Removed Candidate-only pages */}
 
                     {/* Recruiter: applicants list */}
                     <Route path="/recruiter/jobs/:jobId/applicants" element={
@@ -62,8 +58,8 @@ export const AppRouter = () => {
                     } />
                 </Route>
 
-                {/* Public Candidate Job Application View */}
-                <Route path="/ai-recruitment/:companyName/jobs/:jobSlug" element={<PublicJobPage />} />
+                {/* Public Candidate Job Application View — uses company slug */}
+                <Route path="/ai-recruitment/:companySlug/jobs/:jobSlug" element={<PublicJobPage />} />
 
                 {/* Admin-only */}
                 <Route path="/admin/users" element={
@@ -72,15 +68,15 @@ export const AppRouter = () => {
                     </RequireAuth>
                 } />
 
-                {/* Company creation */}
+                {/* Company creation — recruiter onboarding */}
                 <Route path="/company/new" element={
                     <RequireAuth roles={['admin', 'recruiter']}>
                         <CompanyCreatePage />
                     </RequireAuth>
                 } />
 
-                {/* B2B SaaS Tenant Shell */}
-                <Route path="/ai-recruitment/:companyName" element={
+                {/* B2B SaaS Tenant Shell — uses company slug */}
+                <Route path="/ai-recruitment/:companySlug" element={
                     <RequireAuth>
                         <TenantLayout />
                     </RequireAuth>

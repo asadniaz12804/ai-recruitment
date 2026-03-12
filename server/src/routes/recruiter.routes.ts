@@ -44,7 +44,7 @@ router.get(
     try {
       const { candidateId } = req.params;
 
-      if (!candidateId?.match(/^[0-9a-fA-F]{24}$/)) {
+      if (!(candidateId as string)?.match(/^[0-9a-fA-F]{24}$/)) {
         throw new AppError(404, "not_found", "Candidate not found");
       }
 
@@ -68,7 +68,7 @@ router.get(
 
       // Verify this candidate has applied to at least one job at this company
       const companyAppCount = await Application.countDocuments({
-        candidateUserId: new mongoose.Types.ObjectId(candidateId),
+        candidateUserId: new mongoose.Types.ObjectId(candidateId as string),
         companyId: recruiterUser.companyId,
       });
 
@@ -78,19 +78,19 @@ router.get(
 
       // Fetch profile
       const profile = await CandidateProfile.findOne({
-        userId: new mongoose.Types.ObjectId(candidateId),
+        userId: new mongoose.Types.ObjectId(candidateId as string),
       }).lean();
 
       // Fetch resumes
       const resumes = await Resume.find({
-        candidateUserId: new mongoose.Types.ObjectId(candidateId),
+        candidateUserId: new mongoose.Types.ObjectId(candidateId as string),
       })
         .sort({ createdAt: -1 })
         .lean();
 
       // Fetch this candidate's applications to this company's jobs 
       const applications = await Application.find({
-        candidateUserId: new mongoose.Types.ObjectId(candidateId),
+        candidateUserId: new mongoose.Types.ObjectId(candidateId as string),
         companyId: recruiterUser.companyId,
       })
         .sort({ createdAt: -1 })

@@ -5,6 +5,7 @@ import { api } from "./api";
 export interface Company {
   id: string;
   name: string;
+  slug: string;
   website: string | null;
   logoUrl: string | null;
   ownerUserId: string;

@@ -2,24 +2,27 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, MapPin, Briefcase, Wifi, Clock, CheckCircle } from "lucide-react";
 import { getJob, type Job } from "../lib/jobs";
-import { listMyResumes, type ResumeRecord } from "../lib/candidate";
 import { applyToJob } from "../lib/applications";
-import { useAuth } from "../context/AuthContext";
 import styles from "./JobDetailPage.module.css";
 
 export function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Apply state
-  const [resumes, setResumes] = useState<ResumeRecord[]>([]);
-  const [selectedResumeId, setSelectedResumeId] = useState<string>("");
   const [applied, setApplied] = useState(false);
   const [applying, setApplying] = useState(false);
   const [applyError, setApplyError] = useState<string | null>(null);
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [portfolio, setPortfolio] = useState("");
+  const [resumeFile, setResumeFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -32,33 +35,26 @@ export function JobDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Fetch candidate resumes when logged in as candidate
-  useEffect(() => {
-    if (user?.role === "candidate") {
-      listMyResumes()
-        .then((r) => {
-          setResumes(r);
-          if (r.length > 0) setSelectedResumeId(r[0].id);
-        })
-        .catch(() => {});
-    }
-  }, [user]);
-
-  async function handleApply() {
-    if (!id || applying) return;
+  async function handleApply(e: React.FormEvent) {
+    e.preventDefault();
+    if (!id || applying || !resumeFile) return;
     setApplying(true);
     setApplyError(null);
     try {
-      await applyToJob(id, selectedResumeId ? { resumeId: selectedResumeId } : undefined);
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      if (phone) formData.append("phone", phone);
+      if (linkedin) formData.append("linkedin", linkedin);
+      if (portfolio) formData.append("portfolio", portfolio);
+      formData.append("file", resumeFile);
+
+      await applyToJob(id, formData);
       setApplied(true);
     } catch (err: unknown) {
       if (err instanceof Error) {
-        // Check for already-applied (409)
-        if ((err as { status?: number }).status === 409) {
-          setApplied(true);
-        } else {
-          setApplyError(err.message);
-        }
+        setApplyError(err.message);
       } else {
         setApplyError("Failed to apply");
       }
@@ -151,54 +147,60 @@ export function JobDetailPage() {
               <div className={styles.applyCard}>
                 <h3 className={styles.applyCardTitle}>Apply to this position</h3>
 
-                {!user && (
-                  <>
-                    <Link to="/login" className={styles.applyBtn}>Sign In to Apply</Link>
-                    <p className={styles.applyNote}>You must be logged in as a candidate to apply.</p>
-                  </>
-                )}
-
-                {user && user.role !== "candidate" && (
-                  <p className={styles.applyNote}>Only candidates can apply to jobs.</p>
-                )}
-
-                {user && user.role === "candidate" && applied && (
+                {applied && (
                   <div className={styles.appliedState}>
                     <CheckCircle size={18} />
-                    <span>You have applied</span>
+                    <span>Application Submitted Successfully</span>
                   </div>
                 )}
 
-                {user && user.role === "candidate" && !applied && job.status === "open" && (
-                  <>
-                    {resumes.length > 0 && (
-                      <div className={styles.resumeSelect}>
-                        <label htmlFor="resume-select" className={styles.resumeLabel}>Attach resume</label>
-                        <select
-                          id="resume-select"
-                          value={selectedResumeId}
-                          onChange={(e) => setSelectedResumeId(e.target.value)}
-                          className={styles.resumeDropdown}
-                        >
-                          <option value="">No resume</option>
-                          {resumes.map((r) => (
-                            <option key={r.id} value={r.id}>{r.originalFileName}</option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
+                {!applied && job.status === "open" && (
+                  <form onSubmit={handleApply} className={styles.applyForm}>
+                    <div className={styles.formGroup}>
+                      <label>First Name *</label>
+                      <input type="text" required value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Last Name *</label>
+                      <input type="text" required value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Email *</label>
+                      <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Phone</label>
+                      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>LinkedIn Profile URL</label>
+                      <input type="url" value={linkedin} onChange={(e) => setLinkedin(e.target.value)} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Portfolio / GitHub URL</label>
+                      <input type="url" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Resume (PDF/DOCX) *</label>
+                      <input 
+                        type="file" 
+                        required 
+                        accept=".pdf,.doc,.docx" 
+                        onChange={(e) => setResumeFile(e.target.files?.[0] || null)} 
+                      />
+                    </div>
                     <button
                       className={styles.applyBtn}
-                      onClick={handleApply}
-                      disabled={applying}
+                      type="submit"
+                      disabled={applying || !resumeFile}
                     >
-                      {applying ? "Applying…" : "Apply Now"}
+                      {applying ? "Applying…" : "Submit Application"}
                     </button>
                     {applyError && <p className={styles.applyError}>{applyError}</p>}
-                  </>
+                  </form>
                 )}
 
-                {user && user.role === "candidate" && !applied && job.status !== "open" && (
+                {!applied && job.status !== "open" && (
                   <p className={styles.applyNote}>This job is not currently accepting applications.</p>
                 )}
               </div>

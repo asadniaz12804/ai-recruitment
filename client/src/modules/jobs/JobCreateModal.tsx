@@ -122,7 +122,7 @@ export const JobCreateModal: React.FC<JobCreateModalProps> = ({ onClose, editJob
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
                                 <label className={styles.label}>Status</label>
-                                <select className={styles.textarea} style={{ minHeight: 'auto', resize: 'none', padding: '8px 12px' }} value={status} onChange={(e) => setStatus(e.target.value)}>
+                                <select className={styles.textarea} style={{ minHeight: 'auto', resize: 'none', padding: '8px 12px' }} value={status} onChange={(e) => setStatus(e.target.value as any)}>
                                     {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
                                 </select>
                             </div>

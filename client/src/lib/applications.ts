@@ -1,4 +1,4 @@
-import { api } from "./api";
+import { api, BASE_URL } from "./api";
 import type { Pagination } from "./jobs";
 
 // --------------- Types ---------------
@@ -104,12 +104,31 @@ export interface ApplicationDetail {
 
 export async function applyToJob(
   jobId: string,
-  payload?: { resumeId?: string }
+  formData: FormData
 ): Promise<ApplicationDetail> {
-  return api<ApplicationDetail>(`/api/jobs/${jobId}/apply`, {
+  const token = localStorage.getItem("accessToken");
+  const headers: Record<string, string> = {};
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${BASE_URL}/api/jobs/${jobId}/apply`, {
     method: "POST",
-    body: payload ?? {},
+    headers,
+    body: formData,
   });
+
+  if (!res.ok) {
+    let errorMsg = "Failed to apply";
+    try {
+      const errorData = await res.json();
+      errorMsg = errorData?.error?.message || errorData?.message || errorMsg;
+    } catch {
+      errorMsg = `Server Error: ${res.status} ${res.statusText}`;
+    }
+    throw new Error(errorMsg);
+  }
+
+  const json = await res.json();
+  return json.data;
 }
 
 export async function listMyApplications(params?: {

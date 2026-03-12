@@ -1,19 +1,21 @@
 import { useState, type FormEvent } from "react";
-import { createCompany, type Company } from "../lib/admin";
+import { useNavigate } from "react-router-dom";
+import { createCompany } from "../lib/admin";
+import { useAuth } from "../context/AuthContext";
 import styles from "./CompanyCreatePage.module.css";
 
 export function CompanyCreatePage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [website, setWebsite] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [created, setCreated] = useState<Company | null>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    setCreated(null);
     setSubmitting(true);
 
     try {
@@ -22,10 +24,8 @@ export function CompanyCreatePage() {
         website: website.trim() || undefined,
         logoUrl: logoUrl.trim() || undefined,
       });
-      setCreated(company);
-      setName("");
-      setWebsite("");
-      setLogoUrl("");
+      // Navigate to the new company's dashboard using the slug
+      navigate(`/ai-recruitment/${company.slug}`, { replace: true });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to create company");
     } finally {
@@ -38,16 +38,12 @@ export function CompanyCreatePage() {
       <header className={styles.header}>
         <h1 className={styles.title}>Create Company</h1>
         <p className={styles.subtitle}>
-          Register a new company on the platform.
+          {user?.role === "recruiter" && !user.companyId
+            ? "You need to create or join a company before you can start recruiting."
+            : "Register a new company on the platform."}
         </p>
       </header>
 
-      {created && (
-        <div className={styles.successMsg}>
-          Company "<strong>{created.name}</strong>" created successfully (ID:{" "}
-          {created.id}).
-        </div>
-      )}
       {error && <div className={styles.errorMsg}>{error}</div>}
 
       <form className={styles.form} onSubmit={handleSubmit}>

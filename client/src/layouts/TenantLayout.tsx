@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { Outlet, useParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { Sidebar } from '../components/layout/Sidebar';
 import { Topbar } from '../components/layout/Topbar';
 import styles from './TenantLayout.module.css';
 
 export const TenantLayout = () => {
-    const { companyName } = useParams<{ companyName: string }>();
+    const { companySlug } = useParams<{ companySlug: string }>();
+    const { user } = useAuth();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    // Use the user's company name for display, slug for routing
+    const displayName = user?.companyName || companySlug || 'Company';
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -15,13 +20,14 @@ export const TenantLayout = () => {
     return (
         <div className={styles.layout}>
             <Sidebar
-                companyName={companyName || 'Company'}
+                companyName={displayName}
+                companySlug={companySlug || ''}
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
             />
             <div className={styles.mainWrapper}>
                 <Topbar
-                    companyName={companyName || 'Company'}
+                    companyName={displayName}
                     onMenuClick={toggleSidebar}
                 />
                 <main className={styles.mainContent}>

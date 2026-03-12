@@ -15,12 +15,13 @@ import styles from './Sidebar.module.css';
 
 interface SidebarProps {
     companyName: string;
+    companySlug: string;
     isOpen: boolean;
     onClose: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ companyName, isOpen, onClose }) => {
-    const getNavPath = (path: string) => `/ai-recruitment/${companyName}/${path}`;
+export const Sidebar: React.FC<SidebarProps> = ({ companyName, companySlug, isOpen, onClose }) => {
+    const getNavPath = (path: string) => `/ai-recruitment/${companySlug}/${path}`;
 
     const navItems = [
         { label: 'Dashboard', icon: LayoutDashboard, path: '' },

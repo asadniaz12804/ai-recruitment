@@ -1,11 +1,16 @@
 import { z } from "zod";
-import { paginationSchema, objectIdSchema } from "./validation.phase2.js";
+import { paginationSchema } from "./validation.phase2.js";
 import { APPLICATION_STAGES } from "../models/Application.js";
 
 // --------------- Apply To Job ---------------
 
 export const applyToJobSchema = z.object({
-  resumeId: objectIdSchema.optional(),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Valid email is required"),
+  phone: z.string().optional(),
+  linkedin: z.string().url("Must be a valid URL").optional().or(z.literal('')),
+  portfolio: z.string().url("Must be a valid URL").optional().or(z.literal('')),
 });
 
 export type ApplyToJobInput = z.infer<typeof applyToJobSchema>;

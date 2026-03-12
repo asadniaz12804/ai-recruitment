@@ -3,9 +3,13 @@ import { randomUUID } from "node:crypto";
 import { Application, type IApplication } from "../models/Application.js";
 import { Job } from "../models/Job.js";
 import { Resume } from "../models/Resume.js";
+import { User } from "../models/User.js";
+import { CandidateProfile } from "../models/CandidateProfile.js";
+import * as argon2 from "argon2";
+import { storage } from "./storage.service.js";
 import { AppError } from "../lib/errors.js";
 import { audit } from "../lib/audit.js";
-import { enqueueApplicationScore } from "../jobs/enqueue.js";
+import { enqueueApplicationScore, enqueueResumeParse } from "../jobs/enqueue.js";
 import type {
   ApplyToJobInput,
   UpdateApplicationStageInput,
@@ -49,12 +53,11 @@ function safeApplication(app: IApplication) {
 // Candidate: Apply to job
 // ========================================================================
 
-export async function applyToJob(
+export async function applyPublicToJob(
   jobId: string,
-  candidateUserId: string,
-  input: ApplyToJobInput
+  input: ApplyToJobInput,
+  file: Express.Multer.File
 ) {
-  // Validate job exists and is open
   if (!jobId.match(/^[0-9a-fA-F]{24}$/)) {
     throw new AppError(404, "not_found", "Job not found");
   }
@@ -67,38 +70,74 @@ export async function applyToJob(
     throw new AppError(400, "job_not_open", "This job is not accepting applications");
   }
 
-  // Validate resume ownership if provided
-  let resumeId: mongoose.Types.ObjectId | undefined;
-  if (input.resumeId) {
-    const resume = await Resume.findById(input.resumeId).lean();
-    if (!resume) {
-      throw new AppError(404, "not_found", "Resume not found");
-    }
-    if (resume.candidateUserId.toString() !== candidateUserId) {
-      throw new AppError(403, "forbidden", "Resume does not belong to you");
-    }
-    resumeId = resume._id;
+  // 1. Find or create "ghost" User based on email
+  let user = await User.findOne({ email: input.email.toLowerCase() });
+  
+  if (!user) {
+    const randomPassword = randomUUID();
+    const hash = await argon2.hash(randomPassword);
+    user = await User.create({
+      email: input.email.toLowerCase(),
+      name: `${input.firstName} ${input.lastName}`.trim(),
+      passwordHash: hash,
+      role: "candidate",
+      isVerified: true, // Ghost users are functionally active without verification
+    });
+
+    // Create CandidateProfile 
+    await CandidateProfile.create({
+      userId: user._id,
+      headline: "Applicant",
+      links: {
+        linkedin: input.linkedin || "",
+        portfolio: input.portfolio || "",
+      },
+      skills: [],
+    });
   }
 
-  // Check duplicate
+  // Check duplicate application
   const existing = await Application.findOne({
     jobId: new mongoose.Types.ObjectId(jobId),
-    candidateUserId: new mongoose.Types.ObjectId(candidateUserId),
+    candidateUserId: user._id,
   }).lean();
 
   if (existing) {
     throw new AppError(409, "already_applied", "You have already applied to this job");
   }
 
+  // 2. Upload Resume File
+  const uniqueId = `${Date.now()}_${randomUUID().slice(0, 8)}`;
+  const uploadResult = await storage.upload(file.buffer, {
+    folder: `ai-recruitment/resumes/${user._id.toString()}`,
+    publicId: uniqueId,
+    resourceType: "raw",
+  });
+
+  const resume = await Resume.create({
+    candidateUserId: user._id,
+    originalFileName: file.originalname,
+    mimeType: file.mimetype,
+    sizeBytes: file.size,
+    storageProvider: uploadResult.provider,
+    url: uploadResult.url,
+    publicIdOrKey: uploadResult.publicIdOrKey,
+    uploadedAt: new Date(),
+  });
+
+  // Enqueue AI resume-parse
+  enqueueResumeParse(resume._id.toString()).catch(() => {});
+
+  // 3. Create Application
   const application = await Application.create({
     jobId: job._id,
     companyId: job.companyId,
-    candidateUserId: new mongoose.Types.ObjectId(candidateUserId),
-    resumeId,
+    candidateUserId: user._id,
+    resumeId: resume._id,
     stage: "applied",
   });
 
-  // Enqueue AI scoring job (no-op when AI_ENABLED=false)
+  // Enqueue AI scoring job
   enqueueApplicationScore(application._id.toString()).catch(() => {});
 
   return safeApplication(application);

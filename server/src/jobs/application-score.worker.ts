@@ -9,19 +9,19 @@
  *   3. Call AiProvider.scoreCandidate()
  *   4. Update Application.matchScore + aiSummary
  */
-import { Worker, type Job } from "bullmq";
+import { Worker } from "bullmq";
 import { getRedisConnection } from "../lib/redis.js";
 import { getAiProvider } from "../ai/index.js";
 import { Application } from "../models/Application.js";
 import { Job as JobModel } from "../models/Job.js";
 import { Resume } from "../models/Resume.js";
 import { CandidateProfile } from "../models/CandidateProfile.js";
-import { getApplicationScoreQueue, type ApplicationScoreJobData } from "./queues.js";
+import type { ApplicationScoreJobData } from "./queues.js";
 import { logger } from "../logger.js";
 
 const MAX_PARSE_WAIT_RETRIES = 6; // max 6 re-enqueues (60s total with 10s delay)
 
-async function processApplicationScoreJob(job: Job<ApplicationScoreJobData>): Promise<void> {
+export async function processApplicationScoreJob(job: { id?: string; data: ApplicationScoreJobData }): Promise<void> {
   const { applicationId } = job.data;
   logger.info({ jobId: job.id, applicationId }, "application-score: start");
 
@@ -59,13 +59,10 @@ async function processApplicationScoreJob(job: Job<ApplicationScoreJobData>): Pr
         // Resume parse hasn't completed yet — re-enqueue with delay
         const parseWaitCount = (job.data as unknown as Record<string, unknown>).__parseWaitCount as number ?? 0;
         if (parseWaitCount < MAX_PARSE_WAIT_RETRIES) {
-          logger.info({ applicationId, parseWaitCount }, "application-score: resume parse pending, re-enqueueing");
-          const queue = getApplicationScoreQueue();
-          await queue.add(
-            "score",
-            { applicationId, __parseWaitCount: parseWaitCount + 1 } as unknown as ApplicationScoreJobData,
-            { delay: 10_000 }
-          );
+          logger.info({ applicationId, parseWaitCount }, "application-score: resume parse pending, re-enqueueing via timeout");
+          setTimeout(() => {
+            processApplicationScoreJob({ id: job.id, data: { applicationId } as ApplicationScoreJobData, __parseWaitCount: parseWaitCount + 1 } as any).catch(() => {});
+          }, 10_000);
           return;
         }
         logger.warn({ applicationId }, "application-score: resume parse still pending after max waits, proceeding without text");

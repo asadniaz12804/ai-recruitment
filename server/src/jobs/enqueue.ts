@@ -5,17 +5,20 @@
  */
 import { isAiEnabled } from "../lib/ai-config.js";
 import { logger } from "../logger.js";
+import { processResumeParseJob } from "./resume-parse.worker.js";
+import { processApplicationScoreJob } from "./application-score.worker.js";
 
 export async function enqueueResumeParse(resumeId: string): Promise<void> {
   if (!isAiEnabled()) return;
 
   try {
-    const { getResumeParseQueue } = await import("./queues.js");
-    const queue = getResumeParseQueue();
-    await queue.add("parse", { resumeId });
-    logger.info({ resumeId }, "Enqueued resume-parse job");
+    // Process inline to bypass Redis/BullMQ requirement for MVP
+    logger.info({ resumeId }, "Processing resume-parse job inline");
+    processResumeParseJob({ data: { resumeId } }).catch(err => {
+      logger.error({ err, resumeId }, "Failed inline resume-parse job");
+    });
   } catch (err) {
-    logger.error({ err, resumeId }, "Failed to enqueue resume-parse job");
+    logger.error({ err, resumeId }, "Failed to start inline resume-parse job");
   }
 }
 
@@ -23,11 +26,12 @@ export async function enqueueApplicationScore(applicationId: string): Promise<vo
   if (!isAiEnabled()) return;
 
   try {
-    const { getApplicationScoreQueue } = await import("./queues.js");
-    const queue = getApplicationScoreQueue();
-    await queue.add("score", { applicationId });
-    logger.info({ applicationId }, "Enqueued application-score job");
+    // Process inline to bypass Redis/BullMQ requirement for MVP
+    logger.info({ applicationId }, "Processing application-score job inline");
+    processApplicationScoreJob({ data: { applicationId } }).catch(err => {
+      logger.error({ err, applicationId }, "Failed inline application-score job");
+    });
   } catch (err) {
-    logger.error({ err, applicationId }, "Failed to enqueue application-score job");
+    logger.error({ err, applicationId }, "Failed to start inline application-score job");
   }
 }

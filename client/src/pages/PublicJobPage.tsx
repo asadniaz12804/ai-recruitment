@@ -7,15 +7,15 @@ import { ThemeToggle } from '../components/shared/ThemeToggle';
 import styles from './PublicJobPage.module.css';
 
 export const PublicJobPage = () => {
-    const { companyName, jobSlug } = useParams<{ companyName: string, jobSlug: string }>();
+    const { companySlug, jobSlug } = useParams<{ companySlug: string, jobSlug: string }>();
 
     // Mock processing of slug to title
     const formattedJobTitle = jobSlug
         ? jobSlug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
         : 'Open Position';
 
-    const formattedCompany = companyName
-        ? companyName.charAt(0).toUpperCase() + companyName.slice(1)
+    const formattedCompany = companySlug
+        ? companySlug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
         : 'Company';
 
     return (
